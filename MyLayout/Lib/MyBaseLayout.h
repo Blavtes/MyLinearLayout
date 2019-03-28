@@ -9,7 +9,7 @@
 #import "MyLayoutDef.h"
 #import "MyLayoutPos.h"
 #import "MyLayoutSize.h"
-#import "MyLayoutSizeClass.h"
+#import "MyBorderline.h"
 
 /*
  几种视图类型的定义：
@@ -39,7 +39,7 @@
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
  |Vert MyTableLayout  |   T,B,CY         | L,R                  | L,R,T,B,CY    |    -      |    -               |  -    |T,B    |
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
- |Horz MyTableLayout  |   L,R,CX         | T,B                  | L,R,CX,T,B    |    -      |    -               | L,R   |	-    |
+ |Horz MyTableLayout  |   L,R,CX         | T,B                  | L,R,CX,T,B    |    -      |    -               | L,R   |    -    |
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
  |MyFrameLayout       |   ALL            |  -                   | L,R,T,B,CX,CY |    -      |    -               |  -    | -     |
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
@@ -51,9 +51,9 @@
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
  |Vert MyFloatLayout  |   -              | T,B,R,L              |  -            |   -       |    -               | -     | -     |
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
- |Horz MyFloatLayout  |   -              | T,B,R,L              |  -            |   -       |    -               | -	 | -     |
+ |Horz MyFloatLayout  |   -              | T,B,R,L              |  -            |   -       |    -               | -     | -     |
  |--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------|
- |MyPathLayout        |   -              | T,L                  |  -            |   -       |    -               | -	 | -     |
+ |MyPathLayout        |   -              | T,L                  |  -            |   -       |    -               | -     | -     |
  +--------------------+------------------+----------------------+---------------+-----------+--------------------+-------+-------+
 
  *上面表格中L=leftPos, R=rightPos, T=topPos, B=bottomPos,CX=centerXPos,CY=centerYPos,ALL是所有布局位置对象,-表示不支持。
@@ -134,6 +134,10 @@
 
 
 
+/**
+ *视图的基线位置对象。目前只支持相对布局里面的视图的设置并且调用视图或者被调用视图都只能是UILabel和UITextField和UITextView三个只支持单行文本的视图。
+ */
+@property(nonatomic, readonly) MyLayoutPos *baselinePos;
 
 
 /*
@@ -167,100 +171,100 @@
 
 
 /**
- *视图上边的布局位置, 是topPos.equalTo方法的简化版本
+ *视图上边的布局位置, 是topPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Top layout position of the view. Equivalent to topPos.equalTo(NSNumber).
+ *Top layout position of the view. Equivalent to topPos.equalTo(NSNumber). Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myTop;
 
 
 /**
- *视图头部的布局位置, 是leadingPos.equalTo方法的简化版本
+ *视图头部的布局位置, 是leadingPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Leading layout position of the view. Equivalent to leadingPos.equalTo(NSNumber).
+ *Leading layout position of the view. Equivalent to leadingPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myLeading;
 
 
 /**
- *视图下边的布局位置, 是bottomPos.equalTo方法的简化版本
+ *视图下边的布局位置, 是bottomPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Bottom layout position of the view. Equivalent to bottomPos.equalTo(NSNumber).
+ *Bottom layout position of the view. Equivalent to bottomPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myBottom;
 
 
 /**
- *视图尾部的布局位置, 是trailingPos.equalTo方法的简化版本
+ *视图尾部的布局位置, 是trailingPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Trailing layout position of the view. Equivalent to trailingPos.equalTo(NSNumber).
+ *Trailing layout position of the view. Equivalent to trailingPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myTrailing;
 
 
 /**
- *视图水平中心布局位置, 是centerXPos.equalTo方法的简化版本
+ *视图水平中心布局位置, 是centerXPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Horizontal center layout position of the view. Equivalent to centerXPos.equalTo(NSNumber).
+ *Horizontal center layout position of the view. Equivalent to centerXPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myCenterX;
 
 /**
- *视图垂直中心布局位置, 是centerYPos.equalTo方法的简化版本
+ *视图垂直中心布局位置, 是centerYPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Vertical center layout position of the view. Equivalent to centerYPos.equalTo(NSNumber).
+ *Vertical center layout position of the view. Equivalent to centerYPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myCenterY;
 
 /**
- *视图中心布局位置, 是myCenterX,myCenterY方法的简化版本
+ *视图中心布局位置, 是myCenterX,myCenterY方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Center layout position of the view. Equivalent to set myCenterX and myCenterY .
+ *Center layout position of the view. Equivalent to set myCenterX and myCenterY .Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGPoint myCenter;
 
 
 /**
- *视图左边的布局位置, 是leftPos.equalTo方法的简化版本
+ *视图左边的布局位置, 是leftPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Left layout position of the view. Equivalent to leftPos.equalTo(NSNumber).
+ *Left layout position of the view. Equivalent to leftPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myLeft;
 
 
 /**
- *视图右边的布局位置, 是rightPos.equalTo方法的简化版本
+ *视图右边的布局位置, 是rightPos.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Right layout position of the view. Equivalent to rightPos.equalTo(NSNumber).
+ *Right layout position of the view. Equivalent to rightPos.equalTo(NSNumber).Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myRight;
 
 
 
 /**
- *视图四边的布局位置, 是myLeading,myTop,myTrailing,myBottom的简化版本
+ *视图四边的布局位置, 是myLeading,myTop,myTrailing,myBottom的简化版本。此属性只用于赋值不用于读取！
  */
 /**
- *Boundary layout position of the view. Equivalent to myLeading,myTop,myTrailing,myBottom set to the same number.
+ *Boundary layout position of the view. Equivalent to myLeading,myTop,myTrailing,myBottom set to the same number.Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myMargin;
 
 /**
- *leading and trailing margin of the view to the superview. Equivalent to myLeading,myTrailing set to the same number
+ *leading and trailing margin of the view to the superview. Equivalent to myLeading,myTrailing set to the same number.Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myHorzMargin;
 
 /**
- *top and bottom margin of the view to the superview. Equivalent to myTop,myBottom set to the same number
+ *top and bottom margin of the view to the superview. Equivalent to myTop,myBottom set to the same number.Only for setting, not for getting.
  */
 @property(nonatomic, assign) IBInspectable CGFloat myVertMargin;
 
@@ -290,11 +294,11 @@
  
  定义A为操作的视图本身，B为A的兄弟视图，P为A的父视图。
  +-------------+----------+--------------+---------------+------------+--------------+---------------+--------------+----------------------+
- | 对象 \ 值    | NSNumber |A.widthSize   |A.heightSize   |B.widthSize | B.heightSize |	P.widthSize  |P.heightSize  |NSArray<MyLayoutSize*>|
+ | 对象 \ 值    | NSNumber |A.widthSize   |A.heightSize   |B.widthSize | B.heightSize |    P.widthSize  |P.heightSize  |NSArray<MyLayoutSize*>|
  +-------------+----------+--------------+---------------+------------+--------------+---------------+--------------+----------------------+
- |A.widthSize  | ALL	  |ALL	         |FR/R/FL-H/FO/LH|FR/R/FO/P	  | R	         |L/FR/R/FL/FO/P | R	        |R                     |
+ |A.widthSize  | ALL      |ALL           |FR/R/FL-H/FO   |FR/R/FO/P      | R             |L/FR/R/FL/FO/P | R            |R                     |
  +-------------+----------+--------------+---------------+------------+--------------+---------------+--------------+----------------------+
- |A.heightSize | ALL	  |FR/R/FL-V/FO/L|ALL            |R	          |FR/R/FO/P     |R              |L/FR/R/FL/FO/P|R                     |
+ |A.heightSize | ALL      |FR/R/FL-V/FO/L|ALL            |R              |FR/R/FO/P     |R              |L/FR/R/FL/FO/P|R                     |
  +-------------+----------+--------------+---------------+------------+--------------+---------------+--------------+----------------------+
 
   上表中所有的布局尺寸的值都支持设置为数值，而且所有布局下的子视图的宽度和高度尺寸都可以设置为等于自身的宽度和高度尺寸，布局库这里做了特殊处理，是不会造成循环引用的。比如：
@@ -332,17 +336,17 @@
  */
 
 /**
- *视图的宽度布局尺寸,是widthSize.equalTo方法的简化版本
+ *视图的宽度布局尺寸,是widthSize.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 @property(nonatomic,assign) IBInspectable CGFloat myWidth;
 
 /**
- *视图的高度布局尺寸,是heightSize.equalTo方法的简化版本
+ *视图的高度布局尺寸,是heightSize.equalTo方法的简化版本。此属性只用于赋值不用于读取！
  */
 @property(nonatomic,assign) IBInspectable CGFloat myHeight;
 
 /**
- *视图的宽度高度布局尺寸,是myWidth,myHeight方法的简化版本
+ *视图的宽度高度布局尺寸,是myWidth,myHeight方法的简化版本。此属性只用于赋值不用于读取！
  */
 @property(nonatomic,assign) IBInspectable  CGSize  mySize;
 
@@ -530,7 +534,6 @@
  指定视图的可见性，默认是visible。这个属性是对视图hidden属性的扩展，布局系统对视图的hidden属性设置后，视图将不再参与布局。但在实际中有些场景我们希望视图隐藏后
  仍然会占用空间仍然会参与布局。因此我们可以用这个属性来设置当视图隐藏后是否继续参与布局。
  如果您使用了这个属性来对视图进行隐藏和取消隐藏操作则请不要再去操作hidden属性，否则可能出现二者效果不一致的情况。因此建议视图的隐藏和显示用这个属性进行设置。
- 在老版本中布局中的子视图隐藏时要么都参与布局，要么都不参与布局，这是通过布局属性hideSubviewReLayout来设置，新版本中这个属性将会设置为无效了！
  
  属性可以设置的值如下：
  
@@ -549,7 +552,7 @@
 
 
 /**
- 指定子在布局视图上的对齐方式，默认是None表示未指定，这个属性目前只支持框架布局，线性布局，流式布局下的属性设置。
+ 指定子在布局视图上的对齐方式，默认是None表示未指定，这个属性目前只支持框架布局，线性布局，流式布局，浮动布局下的属性设置。
  
  1. 在框架布局中支持上、中、下、垂直拉伸和左、中、右、水平拉伸8个设置
  
@@ -557,9 +560,9 @@
  
  3. 在水平线性布局中只支持上、中、下、垂直拉伸对齐。(如果父布局视图设置了gravity，子视图设置了这个属性则这个属性优先级最高)
  
- 4. 在垂直流式布局中用来设置一行内的上、中、下、垂直拉伸对齐。(如果父布局视图设置了arrangedGravity，子视图设置了这个属性则这个属性优先级最高)
+ 4. 在垂直流式布局和垂直浮动布局中用来设置一行内的上、中、下、垂直拉伸对齐。(如果流式父布局视图设置了arrangedGravity，子视图设置了这个属性则这个属性优先级最高)
  
- 5. 在水平流式布局中用来设置一列内的左、中、右、水平拉伸对齐。(如果父布局视图设置了arrangedGravity，子视图时设置了这个属性则这个属性优先级最高)
+ 5. 在水平流式布局和水平浮动布局中用来设置一列内的左、中、右、水平拉伸对齐。(如果流式父布局视图设置了arrangedGravity，子视图时设置了这个属性则这个属性优先级最高)
  */
 @property(nonatomic, assign) MyGravity myAlignment;
 
@@ -572,7 +575,7 @@
 
 
 /**
- 视图的在父布局视图调用完评估尺寸的方法后，可以通过这个方法来获取评估的CGRect值。评估的CGRect值是在布局前评估计算的值，而frame则是视图真正完成布局后的真实的CGRect值。在调用这个方法前请先调用父布局视图的-(CGRect)estimateLayoutRect方法进行布局视图的尺寸评估，否则此方法返回的值未可知。这个方法主要用于在视图布局前而想得到其在父布局视图中的位置和尺寸的场景。
+ 视图的在父布局视图调用完评估尺寸的方法后，可以通过这个方法来获取评估的CGRect值。评估的CGRect值是在布局前评估计算的值，而frame则是视图真正完成布局后的真实的CGRect值。在调用这个方法前请先调用父布局视图的-(CGSize)sizeThatFits:方法进行布局视图的尺寸评估，否则此方法返回的值未可知。这个方法主要用于在视图布局前而想得到其在父布局视图中的位置和尺寸的场景。
  
  @return 返回被子视图的评估的CGRect值。
  */
@@ -607,114 +610,6 @@
 @end
 
 
-@interface UIView(MyLayoutExtDeprecated)
-
-/**
- * 过期的位置和尺寸设置方法，老版本中带Margin后缀就明确为了边距的概念，但是这个和属性定义的概念是不一致的，位置即可表示边距也可以表示间距。所以这些方法将设置为过期。您可以在相应的位置定义宏：#define MY_USEOLDMETHODNOWARNING = 1 则不会出现老方法告警，不过不建议这么做。
- */
-
-
-/**
- *过期属性,请用myLeft
- */
-@property(nonatomic, assign)  CGFloat myLeftMargin MYMETHODDEPRECATED("use myLeft to instead");
-
-/**
- *过期属性,请用myTop
- */
-@property(nonatomic, assign)  CGFloat myTopMargin MYMETHODDEPRECATED("use myTop to instead");
-
-/**
- *过期属性,请用myRight
- */
-@property(nonatomic, assign)  CGFloat myRightMargin MYMETHODDEPRECATED("use myRight to instead");
-
-/**
- *过期属性,请用myBottom
- */
-@property(nonatomic, assign)  CGFloat myBottomMargin MYMETHODDEPRECATED("use myBottom to instead");
-
-/**
- *过期属性,请用myCenterX
- */
-@property(nonatomic, assign)  CGFloat myCenterXOffset MYMETHODDEPRECATED("use myCenterX to instead");
-
-/**
- *过期属性,请用myCenterY
- */
-@property(nonatomic, assign)  CGFloat myCenterYOffset MYMETHODDEPRECATED("use myCenterY to instead");
-
-/**
- *过期属性,请用myCenter
- */
-@property(nonatomic, assign)  CGPoint myCenterOffset MYMETHODDEPRECATED("use myCenter to instead");
-
-/**
- *过期属性,请用widthSize
- */
-@property(nonatomic, readonly) MyLayoutSize *widthDime MYMETHODDEPRECATED("use widthSize to instead");
-
-/**
- *过期属性,请用heightSize
- */
-@property(nonatomic, readonly) MyLayoutSize *heightDime MYMETHODDEPRECATED("use heightSize to instead");
-
-
-/**
- *过期属性,请用wrapContentHeight
- */
-@property(nonatomic, assign, getter=isFlexedHeight)  BOOL flexedHeight MYMETHODDEPRECATED("use wrapContentHeight to instead");
-
-
-
-@end
-
-
-
-/**
- *布局的边界画线类，用于实现绘制布局的四周的边界线的功能。一个布局视图中提供了上下左右4个方向的边界画线类对象。
- */
-@interface MyBorderline : NSObject
-
-
-/**
- *边界线的颜色
- */
-@property(nonatomic,strong) UIColor *color;
-
-/**
- *边界线的厚度，默认是1,设置的值不能小于1. 单位是像素。
- */
-@property(nonatomic,assign) CGFloat thick;
-
-/**
- *边界线的头部缩进单位。比如某个布局视图宽度是100，头部缩进单位是20，那么边界线将从20的位置开始绘制。
- */
-@property(nonatomic,assign) CGFloat headIndent;
-
-/**
- *边界线的尾部缩进单位。比如某个布局视图宽度是100，尾部缩进单位是20，那么边界线将绘制到80的位置结束。
- */
-@property(nonatomic, assign) CGFloat tailIndent;
-
-/**
- *设置边界线为点划线,如果是0则边界线是实线
- */
-@property(nonatomic, assign) CGFloat dash;
-
-/**
- *边界线绘制时的偏移量
- */
-@property(nonatomic, assign) CGFloat offset;
-
--(id)initWithColor:(UIColor*)color;
-
-
-@end
-
-//兼容老版本的类名命名不规则的问题，这样老版本仍然可以用MyBorderLineDraw这个类名。
-typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to instead");
-
 
 /**
  布局视图基类，基类不支持实例化对象。在编程时我们经常会用到一些视图，这种视图只是负责将里面的子视图按照某种规则进行排列和布局，而别无其他的作用。因此我们称这种视图为容器视图或者称为布局视图。
@@ -727,7 +622,6 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
 @interface MyBaseLayout : UIView
 
 #if UIKIT_DEFINE_AS_PROPERTIES
-
 /**
   用于实现对阿拉伯国家的布局适配。对于非阿拉伯国家来说，界面布局都是默认从左到右排列。而对于阿拉伯国家来说界面布局则默认是从右往左排列。默认这个属性是NO，您可以将这个属性设置为YES，这样布局里面的所有视图都将从右到左进行排列布局。如果您需要考虑国际化布局的问题，那么您应该用leadingPos来表示头部的位置，而用trailingPos来表示尾部的位置，这样当布局方向是LTR时那么leadingPos就表示的是左边而trailingPos则表示的是右边；而当布局方向是RTL时那么leadingPos表示的是右边而trailingPos则表示的是左边。如果您的界面布局不会考虑到国际化以及不需要考虑RTL时那么您可以用leftPos和rightPos来表示左右而不需要用leadingPos和trailingPos。
  */
@@ -810,6 +704,18 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
 
 
 /**
+ 指定padding内边距的缩进是在SafeArea基础之上进行的。默认是UIRectEdgeLeft|UIRectEdgeRight 表示缩进SafeArea所指定的水平区域。你也可以设置只缩进某一个或则几个方向，或者不缩进任何一个方向。这个属性是为了支持iPoneX而设置的。为了支持iPhoneX的全屏幕适配。我们只需要对根布局视图设置这个扩展属性，默认情况下是不需要进行特殊设置的，MyLayout自动会对iPhoneX进行适配。我们知道iOS11中引入了安全区域的概念，MyLayout中的根布局视图会自动将安全区域叠加到设置的padding中去。默认情况下四周的安全区域都会叠加到padding中去，因此您可以根据特殊情况来设置只需要叠加哪一个方向的安全区域。
+ */
+@property(nonatomic, assign) UIRectEdge insetsPaddingFromSafeArea;
+
+
+/**
+ *当insetsPaddingFromSafeArea同时设置有左右方向同时缩进并且在横屏时是否只缩进有刘海方向的内边距。默认是NO，表示两边都会缩进。如果你想让没有刘海的那一边延伸到屏幕的安全区外，请将这个属性设置为YES。iPhoneX设备中具有一个尺寸为44的刘海区域。当您横屏时为了对齐，左右两边的安全缩进区域都是44。但是有些时候我们希望没有刘海的那一边不需要缩进对齐而是延伸到安全区域以外。这时候您可以通过给根布局视图设置这个属性来达到效果。注意这个属性只有insetsPaddingFromSafeArea设置了左右都缩进时才有效。
+ */
+@property(nonatomic, assign) BOOL insetLandscapeFringePadding;
+
+
+/**
  *设置布局视图里面子视图之间的垂直间距。如果布局内每个子视图的垂直间距都相等则可以用这个属性来设置。这个属性不支持框架布局、相对布局、路径布局。
  */
 @property(nonatomic ,assign) IBInspectable CGFloat subviewVSpace;
@@ -840,6 +746,7 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
  5. MyGravity_Vert_Fill 表示布局会拉伸子视图的高度，以便使里面的子视图垂直方向填充满整个布局视图的高度或者子视图平分布局视图的高度。(支持：框架布局，水平线性布局，水平表格布局，流式布局)
  
  6. MyGravity_Horz_Fill 表示布局会拉伸子视图的宽度，以便使里面的子视图水平方向填充满整个布局视图的宽度或者子视图平分布局视图的宽度。 (支持：框架布局，垂直线性布局，垂直表格布局，流式布局)
+ 7. MyGravity_Vert_Baseline 表示布局里面的子视图都基线对齐，目前只支持水平线性布局。
  */
 @property(nonatomic, assign) IBInspectable MyGravity gravity;
 
@@ -848,6 +755,24 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
  *设置是否布局里面的所有子视图按添加的顺序逆序进行布局。默认是NO，表示按子视图添加的顺序排列。比如一个垂直线性布局依次添加A,B,C三个子视图，那么在正常布局时A,B,C从上到下依次排列，而当这个属性设置为YES时，则布局时就会变成按C,B,A依次从上到下排列。这个属性的设置对框架布局和相对布局无效。
  */
 @property(nonatomic, assign)  BOOL reverseLayout;
+
+
+/**
+ 设置布局内所有子视图的位置的坐标变换，这个坐标变换不会影响到子视图的尺寸。默认值为CGAffineTransformIdentity，表示对子视图不进行任何位置变换。
+  这个属性会对布局视图内所有的子视图进行单独的位置变换，而不是进行整体的变换。在对子视图进行变换时的坐标原点是布局视图的中心点，并且是以子视图自身的中心点作为坐标变换计算的依据。
+ 
+ @note
+ 我们可以设置如下的值进行一些常见的位置变化：
+ 1.CGAffineTransformIdentity 表示恢复正常，不进行任何位置变换。
+ 2.CGAffineTransformMakeTranslation(tx, ty) 表示布局视图内所有子视图的水平位置都将偏移tx, 垂直位置都将偏移ty。
+ 3.CGAffineTransformMakeScale(sx,sy)  表示布局视图内所有子视图的水平位置都将缩放sx倍，所有子视图的垂直位置都将缩放sy倍。
+ 4.CGAffineTransformMake(-1,0,0,1,0,0) 表示布局视图内所有子视图的位置都将水平翻转，形成水平镜像效果。
+ 5.CGAffineTransformMake(1,0,0,-1,0,0) 表示布局视图内所有子视图的位置都将垂直翻转，形成垂直镜像效果。
+ 6.CGAffineTransformMake(-1,0,0,-1,0,0) 表示布局视图内所有子视图的位置都将旋转180度。
+ 7. 当然我们还可以进行任意的坐标变换，只要您熟悉CGAffineTransform的使用和设置方法。
+ */
+@property(nonatomic, assign) CGAffineTransform layoutTransform;
+
 
 
 /**
@@ -872,11 +797,11 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
 /**
  *设置布局视图在布局开始之前的处理块。系统会在每次布局完成前调用对应的处理块后将处理块清空为nil。系统会在调用layoutSubviews方法前执行beginLayoutBlock。
  */
-@property(nonatomic,copy) void (^beginLayoutBlock)();
+@property(nonatomic,copy) void (^beginLayoutBlock)(void);
 /**
  *设置布局视图在布局完成之后的处理块。系统会在每次布局完成后调用对应的处理块后将处理块清空为nil。您也可以在endLayoutBlock块内取到所有子视图真实布局后的frame值。系统会在调用layoutSubviews方法后执行endLayoutBlock。
  */
-@property(nonatomic,copy) void (^endLayoutBlock)();
+@property(nonatomic,copy) void (^endLayoutBlock)(void);
 
 
 
@@ -1000,17 +925,17 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
 /**
 评估布局视图的尺寸。这个方法并不会让布局视图进行真正的布局，只是对布局的尺寸进行评估，主要用于在布局完成前想预先知道布局尺寸的场景。通过对布局进行尺寸的评估，可以在不进行布局的情况下动态的计算出布局的位置和大小，但需要注意的是这个评估值有可能不是真实显示的实际位置和尺寸。
  @param size 指定期望的宽度或者高度，如果size中对应的值设置为0则根据布局自身的高度和宽度来进行评估，而设置为非0则固定指定的高度或者宽度来进行评估。比如下面的例子：
-  1.estimateLayoutRect:CGSizeMake(0,0) 表示按布局的位置和尺寸根据布局的子视图来进行动态评估。
-  2.estimateLayoutRect:CGSizeMake(320,0) 表示布局的宽度固定为320,而高度则根据布局的子视图来进行动态评估。这个情况非常适用于UITableViewCell的动态高度的计算评估。
-  3.estimateLayoutRect:CGSizeMake(0,100) 表示布局的高度固定为100,而宽度则根据布局的子视图来进行动态评估。
+  1.sizeThatFits:CGSizeMake(0,0) 表示按布局的位置和尺寸根据布局的子视图来进行动态评估。
+  2.sizeThatFits:CGSizeMake(320,0) 表示布局的宽度固定为320,而高度则根据布局的子视图来进行动态评估。这个情况非常适用于UITableViewCell的动态高度的计算评估。
+  3.sizeThatFits:CGSizeMake(0,100) 表示布局的高度固定为100,而宽度则根据布局的子视图来进行动态评估。
  @return 返回评估的尺寸。
  */
--(CGRect)estimateLayoutRect:(CGSize)size;
--(CGRect)estimateLayoutRect:(CGSize)size inSizeClass:(MySizeClass)sizeClass;
+-(CGSize)sizeThatFits:(CGSize)size;
+-(CGSize)sizeThatFits:(CGSize)size inSizeClass:(MySizeClass)sizeClass;
 
 
 /**
-  是否缓存经过estimateLayoutRect方法评估后的所有子视图的位置和尺寸一次!，默认设置为NO不缓存。当我们用estimateLayoutRect方法评估布局视图的尺寸后，所有子视图都会生成评估的位置和尺寸，因为此时并没有执行布局所以子视图并没有真实的更新frame值。而当布局视图要进行真实布局时又会重新计算所有子视图的位置和尺寸，因此为了优化性能当我们对布局进行评估后在下次真实布局时我们可以不再重新计算子视图的位置和尺寸而是用前面评估的值来设置位置和尺寸。这个属性设置为YES时则每次评估后到下一次布局时不会再重新计算子视图的布局了，而是用评估值来布局子视图的位置和尺寸。而当这个属性设置为NO时则每次布局都会重新计算子视图的位置和布局。
+  是否缓存经过sizeThatFits方法评估后的所有子视图的位置和尺寸一次!，默认设置为NO不缓存。当我们用sizeThatFits方法评估布局视图的尺寸后，所有子视图都会生成评估的位置和尺寸，因为此时并没有执行布局所以子视图并没有真实的更新frame值。而当布局视图要进行真实布局时又会重新计算所有子视图的位置和尺寸，因此为了优化性能当我们对布局进行评估后在下次真实布局时我们可以不再重新计算子视图的位置和尺寸而是用前面评估的值来设置位置和尺寸。这个属性设置为YES时则每次评估后到下一次布局时不会再重新计算子视图的布局了，而是用评估值来布局子视图的位置和尺寸。而当这个属性设置为NO时则每次布局都会重新计算子视图的位置和布局。
    这个属性一般用在那些动态高度UITableviewCell中进行配合使用，我们一般将布局视图作为UITableviewCell的contentView的子视图:
  
  @code
@@ -1029,11 +954,14 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
  -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
  {
      UITableViewCellXXX *cell = (UITableViewCellXXX*)[self tableView:tableView cellForRowAtIndexPath:indexPath];
-     CGRect rect = [cell.rootLayout estimateLayoutRect:CGSizeMake(tableView.frame.size.width, 0)];
-     return rect.size.height;
+     CGSize size = [cell.rootLayout sizeThatFits:CGSizeMake(tableView.frame.size.width, 0)];
+     return size.height;
  }
  
  @endcode
+ 
+ @note
+   这个属性有可能会造成动态高度计算不正确，请只在UITableviewCell的高度为自适应时使用，其他地方不建议设置这个属性！！
  */
 @property(nonatomic, assign) BOOL cacheEstimatedRect;
 
@@ -1072,7 +1000,7 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
  @endcode
  
  @param subview 一个未加入布局视图的子视图，如果子视图已经加入则直接返回子视图的frame值。
- @param size 指定布局视图期望的宽度或者高度，一般请将这个值设置为CGSizeZero。 具体请参考estimateLayoutRect方法中的size的说明。
+ @param size 指定布局视图期望的宽度或者高度，一般请将这个值设置为CGSizeZero。 具体请参考sizeThatFits方法中的size的说明。
  @return 子视图在布局视图最后一个位置(假如加入后)的frame值。
  */
 -(CGRect)subview:(UIView*)subview estimatedRectInLayoutSize:(CGSize)size;
@@ -1080,76 +1008,5 @@ typedef MyBorderline MyBorderLineDraw MYMETHODDEPRECATED("use MyBorderline to in
 
 @end
 
-
-@interface MyBaseLayout(MyBaseLayoutDeprecated)
-
-/**
- *过期方法，对于间距统一用space来描述，而边距用margin来描述。
- *原先子视图之间的间距属性的命名规范不合理，所以这里将原先的设置间距的属性设置为过期。这里也和TangramKit中的命名统一。
- *您可以在相应的位置定义宏：#define MY_USEOLDMETHODNOWARNING = 1 则不会出现老方法告警，不过不建议这么做。
- */
-
-/**
-*过期属性,请用subviewVSpace
-*/
-@property(nonatomic ,assign, getter=subviewVSpace, setter=setSubviewVSpace:) CGFloat subviewVertMargin MYMETHODDEPRECATED("use subviewVSpace to instead");
-
-/**
- *过期属性,请用subviewHSpace
- */
-@property(nonatomic, assign, getter=subviewHSpace, setter=setSubviewHSpace:) CGFloat subviewHorzMargin MYMETHODDEPRECATED("use subviewHSpace to instead");
-
-/**
- *过期属性,请用subviewSpace
- */
-@property(nonatomic, assign, getter=subviewSpace, setter=setSubviewSpace:) CGFloat subviewMargin MYMETHODDEPRECATED("use subviewSpace to instead");
-
-/**
- *过期方法, 原先对边界线命名BorderLine不符合规则，Borderline是一个单词不是一个词组。这里也和TangramKit中的命名统一。
- */
-
-/**
- *过期属性,请用leftBorderline
- */
-@property(nonatomic, strong, getter=leftBorderline, setter=setLeftBorderline:) MyBorderline *leftBorderLine MYMETHODDEPRECATED("use leftBorderline to instead");
-
-/**
- *过期属性,请用rightBorderline
- */
-@property(nonatomic, strong, getter=rightBorderline, setter=setRightBorderline:) MyBorderline *rightBorderLine MYMETHODDEPRECATED("use rightBorderline to instead");
-
-/**
- *过期属性,请用topBorderline
- */
-@property(nonatomic, strong, getter=topBorderline, setter=setTopBorderline:) MyBorderline *topBorderLine MYMETHODDEPRECATED("use topBorderline to instead");
-
-/**
- *过期属性,请用bottomBorderline
- */
-@property(nonatomic, strong, getter=bottomBorderline, setter=setBottomBorderline:) MyBorderline *bottomBorderLine MYMETHODDEPRECATED("use bottomBorderline to instead");
-
-/**
- *过期属性,请用boundBorderline
- */
-@property(nonatomic, strong, getter=boundBorderline, setter=setBoundBorderline:) MyBorderline *boundBorderLine MYMETHODDEPRECATED("use boundBorderline to instead");
-
-/**
- *过期属性,请用intelligentBorderline
- */
-@property(nonatomic, strong, getter=intelligentBorderline, setter=setIntelligentBorderline:) MyBorderline *IntelligentBorderLine MYMETHODDEPRECATED("use intelligentBorderline to instead");
-
-/**
- *过期属性,请用notUseIntelligentBorderline
- */
-@property(nonatomic, assign, getter=notUseIntelligentBorderline, setter=setNotUseIntelligentBorderline:) BOOL notUseIntelligentBorderLine MYMETHODDEPRECATED("use notUseIntelligentBorderline to instead");
-
-
-/**
- *这个属性在新版本将失效并且无任何意义了。如果想让子视图隐藏时是否继续占据位置则请参考使用子视图的myVisibility属性来进行单独设置。
- */
-@property(nonatomic, assign) BOOL hideSubviewReLayout  MYMETHODDEPRECATED("this property was invalid, please use subview's myVisibility to instead");
-
-
-@end
 
 

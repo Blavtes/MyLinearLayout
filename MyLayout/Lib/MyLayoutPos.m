@@ -9,6 +9,7 @@
 #import "MyLayoutPos.h"
 #import "MyLayoutPosInner.h"
 #import "MyBaseLayout.h"
+#import "MyLayoutMath.h"
 
 
 
@@ -18,6 +19,12 @@
     CGFloat _offsetVal;
     MyLayoutPos *_lBoundVal;
     MyLayoutPos *_uBoundVal;
+}
+
++(CGFloat)safeAreaMargin
+{
+    //在2017年10月3号定义的一个数字，没有其他特殊意义。
+    return -20171003.0;
 }
 
 -(id)init
@@ -223,7 +230,7 @@
 }
 
 
-#pragma mark -- Private Method
+#pragma mark -- Private Methods
 
 
 -(NSNumber*)posNumVal
@@ -232,13 +239,100 @@
         return nil;
     
     if (_posValType == MyLayoutValueType_NSNumber)
+    {
         return _posVal;
+    }
     else if (_posValType == MyLayoutValueType_UILayoutSupport)
+    {
+       //只有在11以后并且是设置了safearea缩进才忽略UILayoutSupport。
+        UIView *superview = self.view.superview;
+            if (superview != nil &&
+                [UIDevice currentDevice].systemVersion.doubleValue >= 11 &&
+                [superview isKindOfClass:[MyBaseLayout class]])
+            {
+                UIRectEdge edge = ((MyBaseLayout*)superview).insetsPaddingFromSafeArea;
+                if ((_pos == MyGravity_Vert_Top && (edge & UIRectEdgeTop) == UIRectEdgeTop) ||
+                    (_pos == MyGravity_Vert_Bottom && (edge & UIRectEdgeBottom) == UIRectEdgeBottom))
+                {
+                    return @(0);
+                }
+            }
+        
         return @([((id<UILayoutSupport>)_posVal) length]);
+    }
+    else if (_posValType == MyLayoutValueType_SafeArea)
+    {
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+        
+        if (@available(iOS 11.0, *)) {
+            
+            UIView *superView = self.view.superview;
+           /* UIEdgeInsets insets = superView.safeAreaInsets;
+            UIScrollView *superScrollView = nil;
+            if ([superView isKindOfClass:[UIScrollView class]])
+            {
+                superScrollView = (UIScrollView*)superView;
+                
+            }
+            */
+            
+            switch (_pos) {
+                case MyGravity_Horz_Leading:
+                    return  [MyBaseLayout isRTL]? @(superView.safeAreaInsets.right) : @(superView.safeAreaInsets.left);
+                    break;
+                case MyGravity_Horz_Trailing:
+                    return  [MyBaseLayout isRTL]? @(superView.safeAreaInsets.left) : @(superView.safeAreaInsets.right);
+                    break;
+                case MyGravity_Vert_Top:
+                    return @(superView.safeAreaInsets.top);
+                    break;
+                case MyGravity_Vert_Bottom:
+                    return @(superView.safeAreaInsets.bottom);
+                    break;
+                default:
+                    return @(0);
+                    break;
+            }
+        }
+#endif
+        if (_pos == MyGravity_Vert_Top)
+        {
+            return @([self findContainerVC].topLayoutGuide.length);
+        }
+        else if (_pos == MyGravity_Vert_Bottom)
+        {
+            return @([self findContainerVC].bottomLayoutGuide.length);
+        }
+        
+        return @(0);
+        
+    }
     
     
     return nil;
     
+}
+
+-(UIViewController*)findContainerVC
+{
+    UIViewController *vc = nil;
+    
+    @try {
+        
+        UIView *v = self.view;
+        while (v != nil)
+        {
+            vc = [v valueForKey:@"viewDelegate"];
+            if (vc != nil)
+                break;
+            v = [v superview];
+        }
+        
+    } @catch (NSException *exception) {
+        
+    }
+    
+    return vc;
 }
 
 
@@ -309,7 +403,18 @@
     if (![_posVal isEqual:val])
     {
         if ([val isKindOfClass:[NSNumber class]])
-            _posValType = MyLayoutValueType_NSNumber;
+        {
+            //特殊处理设置为safeAreaMargin边距的值。
+            if ([val doubleValue] == [MyLayoutPos safeAreaMargin])
+            {
+              
+                    _posValType = MyLayoutValueType_SafeArea;
+            }
+            else
+            {
+                _posValType = MyLayoutValueType_NSNumber;
+            }
+        }
         else if ([val isKindOfClass:[MyLayoutPos class]])
             _posValType = MyLayoutValueType_LayoutPos;
         else if ([val isKindOfClass:[NSArray class]])
@@ -347,6 +452,9 @@
                     break;
                 case MyGravity_Vert_Bottom:
                     val = rview.bottomPos;
+                    break;
+                case MyGravity_Vert_Baseline:
+                    val = rview.baselinePos;
                     break;
                 default:
                     NSAssert(0, @"oops!");
@@ -448,10 +556,10 @@
             retVal +=self.posNumVal.doubleValue;
         
         if (_uBoundVal != nil)
-            retVal = MIN(_uBoundVal.posNumVal.doubleValue, retVal);
+            retVal = _myCGFloatMin(_uBoundVal.posNumVal.doubleValue, retVal);
         
         if (_lBoundVal != nil)
-            retVal = MAX(_lBoundVal.posNumVal.doubleValue, retVal);
+            retVal = _myCGFloatMax(_lBoundVal.posNumVal.doubleValue, retVal);
         
         return retVal;
     }
@@ -471,6 +579,12 @@
         return NO;
 }
 
+-(BOOL)isSafeAreaPos
+{
+    return self.isActive && (_posValType == MyLayoutValueType_SafeArea || _posValType == MyLayoutValueType_UILayoutSupport);
+}
+
+
 -(CGFloat)realPosIn:(CGFloat)size
 {
     if (self.isActive)
@@ -482,10 +596,10 @@
         realPos += _offsetVal;
         
         if (_uBoundVal != nil)
-            realPos = MIN(_uBoundVal.posNumVal.doubleValue, realPos);
+            realPos = _myCGFloatMin(_uBoundVal.posNumVal.doubleValue, realPos);
         
         if (_lBoundVal != nil)
-            realPos = MAX(_lBoundVal.posNumVal.doubleValue, realPos);
+            realPos = _myCGFloatMax(_lBoundVal.posNumVal.doubleValue, realPos);
 
         return realPos;
     }
@@ -537,6 +651,9 @@
             break;
         case MyGravity_Vert_Bottom:
             posStr = @"bottomPos";
+            break;
+        case MyGravity_Vert_Baseline:
+            posStr = @"baselinePos";
             break;
         default:
             break;

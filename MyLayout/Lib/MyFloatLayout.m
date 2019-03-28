@@ -52,6 +52,8 @@
 
 @implementation MyFloatLayout
 
+#pragma mark -- Public Methods
+
 -(instancetype)initWithFrame:(CGRect)frame orientation:(MyOrientation)orientation
 {
     self = [super initWithFrame:frame];
@@ -122,32 +124,7 @@
 }
 
 
-#pragma mark -- Deprecated Method
-
-
--(void)setSubviewFloatMargin:(CGFloat)subviewSize minMargin:(CGFloat)minMargin
-{
-    [self setSubviewsSize:subviewSize minSpace:minMargin maxSpace:CGFLOAT_MAX];
-}
-
--(void)setSubviewFloatMargin:(CGFloat)subviewSize minMargin:(CGFloat)minMargin inSizeClass:(MySizeClass)sizeClass
-{
-    [self setSubviewsSize:subviewSize minSpace:minMargin maxSpace:CGFLOAT_MAX inSizeClass:sizeClass];
-}
-
-
-
-
-/*
- // Only override drawRect: if you perform custom drawing.
- // An empty implementation adversely affects performance during animation.
- - (void)drawRect:(CGRect)rect {
- // Drawing code
- }
- */
-
-
-#pragma mark -- Override Method
+#pragma mark -- Override Methods
 
 -(CGSize)calcLayoutRect:(CGSize)size isEstimate:(BOOL)isEstimate pHasSubLayout:(BOOL*)pHasSubLayout sizeClass:(MySizeClass)sizeClass sbs:(NSMutableArray*)sbs
 {
@@ -168,7 +145,7 @@
         if (!isEstimate)
         {
             sbvmyFrame.frame = sbv.bounds;
-            [self myCalcSizeOfWrapContentSubview:sbv sbvsc:sbvsc sbvmyFrame:sbvmyFrame selfLayoutSize:selfSize];
+            [self myCalcSizeOfWrapContentSubview:sbv sbvsc:sbvsc sbvmyFrame:sbvmyFrame];
         }
         
         if ([sbv isKindOfClass:[MyBaseLayout class]])
@@ -197,11 +174,10 @@
                         
             if (isEstimate && isSbvWrap)
             {
-                [(MyBaseLayout*)sbv estimateLayoutRect:sbvmyFrame.frame.size inSizeClass:sizeClass];
+                [(MyBaseLayout*)sbv sizeThatFits:sbvmyFrame.frame.size inSizeClass:sizeClass];
                 if (sbvmyFrame.multiple)
                 {
-                    sbvmyFrame.sizeClass = [sbv myBestSizeClass:sizeClass]; //因为estimateLayoutRect执行后会还原，所以这里要重新设置
-                    sbvsc = sbvmyFrame.sizeClass;
+                    sbvmyFrame.sizeClass = [sbv myBestSizeClass:sizeClass]; //因为sizeThatFits执行后会还原，所以这里要重新设置
                 }
             }
         }
@@ -216,6 +192,9 @@
     
     [self myAdjustLayoutSelfSize:&selfSize lsc:lsc];
     
+    //对所有子视图进行布局变换
+    [self myAdjustSubviewsLayoutTransform:sbs lsc:lsc selfWidth:selfSize.width selfHeight:selfSize.height];
+    //对所有子视图进行RTL设置
     [self myAdjustSubviewsRTLPos:sbs selfWidth:selfSize.width];
     
     return [self myAdjustSizeWhenNoSubviews:selfSize sbs:sbs lsc:lsc];
@@ -226,7 +205,7 @@
     return [MyFloatLayoutViewSizeClass new];
 }
 
-#pragma mark -- Private Method
+#pragma mark -- Private Methods
 
 -(CGPoint)myFindTrailingCandidatePoint:(CGRect)leadingCandidateRect  width:(CGFloat)width trailingBoundary:(CGFloat)trailingBoundary trailingCandidateRects:(NSArray*)trailingCandidateRects hasWeight:(BOOL)hasWeight paddingTop:(CGFloat)paddingTop
 {
@@ -244,7 +223,7 @@
              ) &&
             _myCGFloatGreat(CGRectGetMaxY(leadingCandidateRect), lastHeight))
         {
-            retPoint.y = MAX(CGRectGetMinY(leadingCandidateRect),lastHeight);
+            retPoint.y = _myCGFloatMax(CGRectGetMinY(leadingCandidateRect),lastHeight);
             retPoint.x = CGRectGetMinX(trailingCandidateRect);
             
             if (hasWeight &&
@@ -267,7 +246,7 @@
         if ((hasWeight ? _myCGFloatLess(CGRectGetMaxX(leadingCandidateRect) + width, trailingBoundary) :_myCGFloatLessOrEqual(CGRectGetMaxX(leadingCandidateRect) + width, trailingBoundary) ) &&
             _myCGFloatGreat(CGRectGetMaxY(leadingCandidateRect), lastHeight))
         {
-            retPoint.y =  MAX(CGRectGetMinY(leadingCandidateRect),lastHeight);
+            retPoint.y =  _myCGFloatMax(CGRectGetMinY(leadingCandidateRect),lastHeight);
         }
     }
     
@@ -289,7 +268,7 @@
              _myCGFloatLessOrEqual(CGRectGetMaxY(topCandidateRect) + height, CGRectGetMinY(bottomCandidateRect))) &&
             _myCGFloatGreat(CGRectGetMaxX(topCandidateRect), lastWidth))
         {
-            retPoint.x = MAX(CGRectGetMinX(topCandidateRect),lastWidth);
+            retPoint.x = _myCGFloatMax(CGRectGetMinX(topCandidateRect),lastWidth);
             retPoint.y = CGRectGetMinY(bottomCandidateRect);
             
             if (hasWeight &&
@@ -312,7 +291,7 @@
         if ((hasWeight ? _myCGFloatLess(CGRectGetMaxY(topCandidateRect) + height, bottomBoundary) : _myCGFloatLessOrEqual(CGRectGetMaxY(topCandidateRect) + height, bottomBoundary) ) &&
             _myCGFloatGreat(CGRectGetMaxX(topCandidateRect), lastWidth))
         {
-            retPoint.x =  MAX(CGRectGetMinX(topCandidateRect),lastWidth);
+            retPoint.x =  _myCGFloatMax(CGRectGetMinX(topCandidateRect),lastWidth);
         }
     }
     
@@ -335,7 +314,7 @@
              _myCGFloatGreatOrEqual(CGRectGetMinX(trailingCandidateRect) - width, CGRectGetMaxX(leadingCandidateRect))) &&
             _myCGFloatGreat(CGRectGetMaxY(trailingCandidateRect), lastHeight))
         {
-            retPoint.y = MAX(CGRectGetMinY(trailingCandidateRect),lastHeight);
+            retPoint.y = _myCGFloatMax(CGRectGetMinY(trailingCandidateRect),lastHeight);
             retPoint.x = CGRectGetMaxX(leadingCandidateRect);
             
             if (hasWeight &&
@@ -359,7 +338,7 @@
              _myCGFloatGreatOrEqual(CGRectGetMinX(trailingCandidateRect) - width, leadingBoundary)) &&
             _myCGFloatGreat(CGRectGetMaxY(trailingCandidateRect),lastHeight))
         {
-            retPoint.y =  MAX(CGRectGetMinY(trailingCandidateRect),lastHeight);
+            retPoint.y =  _myCGFloatMax(CGRectGetMinY(trailingCandidateRect),lastHeight);
         }
     }
     
@@ -381,7 +360,7 @@
              _myCGFloatGreatOrEqual(CGRectGetMinY(bottomCandidateRect) - height, CGRectGetMaxY(topCandidateRect))) &&
             _myCGFloatGreat(CGRectGetMaxX(bottomCandidateRect), lastWidth))
         {
-            retPoint.x = MAX(CGRectGetMinX(bottomCandidateRect),lastWidth);
+            retPoint.x = _myCGFloatMax(CGRectGetMinX(bottomCandidateRect),lastWidth);
             retPoint.y = CGRectGetMaxY(topCandidateRect);
             
             if (hasWeight &&
@@ -406,7 +385,7 @@
              _myCGFloatGreatOrEqual(CGRectGetMinY(bottomCandidateRect) - height, topBoundary)) &&
             _myCGFloatGreat(CGRectGetMaxX(bottomCandidateRect), lastWidth))
         {
-            retPoint.x =  MAX(CGRectGetMinX(bottomCandidateRect),lastWidth);
+            retPoint.x =  _myCGFloatMax(CGRectGetMinX(bottomCandidateRect),lastWidth);
         }
     }
     
@@ -419,10 +398,10 @@
 {
     //对于垂直浮动布局来说，默认是左浮动,当设置为RTL时则默认是右浮动，因此我们只需要改变一下sbv.reverseFloat的定义就好了。
     
-    CGFloat paddingTop = lsc.topPadding;
-    CGFloat paddingBottom = lsc.bottomPadding;
-    CGFloat paddingLeading = lsc.leadingPadding;
-    CGFloat paddingTrailing = lsc.trailingPadding;
+    CGFloat paddingTop = lsc.myLayoutTopPadding;
+    CGFloat paddingBottom = lsc.myLayoutBottomPadding;
+    CGFloat paddingLeading = lsc.myLayoutLeadingPadding;
+    CGFloat paddingTrailing = lsc.myLayoutTrailingPadding;
     CGFloat paddingHorz = paddingLeading + paddingTrailing;
     CGFloat paddingVert = paddingTop + paddingBottom;
     
@@ -534,8 +513,13 @@
     CGFloat maxHeight = paddingTop;
     CGFloat maxWidth = paddingLeading;
     
-    for (UIView *sbv in sbs)
+    //记录是否有子视图设置了对齐，如果设置了对齐就会在后面对每行子视图做对齐处理。
+    BOOL sbvHasAlignment = NO;
+    NSMutableArray<NSNumber*> *lineIndexes = [NSMutableArray<NSNumber*> new];
+    
+    for (NSInteger idx = 0; idx < sbs.count; idx++)
     {
+        UIView *sbv = sbs[idx];
         MyFrame *sbvmyFrame = sbv.myFrame;
         UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
         
@@ -544,6 +528,9 @@
         CGFloat bottomSpace = sbvsc.bottomPosInner.absVal;
         CGFloat trailingSpace = sbvsc.trailingPosInner.absVal;
         CGRect rect = sbvmyFrame.frame;
+        
+        //只要有一个子视图设置了对齐，就会做对齐处理，否则不会，这里这样做是为了对后面的对齐计算做优化。
+        sbvHasAlignment |= ((sbvsc.myAlignment & MyGravity_Horz_Mask) > MyGravity_Vert_Top);
         
         
         if (subviewSize != 0)
@@ -602,11 +589,11 @@
             if (sbvsc.clearFloat)
             {
                 //找到最底部的位置。
-                nextPoint.y = MAX(trailingMaxHeight, leadingLastYOffset);
+                nextPoint.y = _myCGFloatMax(trailingMaxHeight, leadingLastYOffset);
                 CGPoint leadingPoint = [self myFindLeadingCandidatePoint:CGRectMake(selfSize.width - paddingTrailing, nextPoint.y, 0, CGFLOAT_MAX) width:leadingSpace + (sbvsc.weight != 0 ? 0 : rect.size.width) + trailingSpace leadingBoundary:paddingLeading leadingCandidateRects:leadingCandidateRects hasWeight:sbvsc.weight != 0  paddingTop:paddingTop];
                 if (leadingPoint.y != CGFLOAT_MAX)
                 {
-                    nextPoint.y = MAX(trailingMaxHeight, leadingPoint.y);
+                    nextPoint.y = _myCGFloatMax(trailingMaxHeight, leadingPoint.y);
                     leadingCandidateXBoundary = leadingPoint.x;
                 }
             }
@@ -619,7 +606,7 @@
                     CGPoint leadingPoint = [self myFindLeadingCandidatePoint:candidateRect width:leadingSpace + (sbvsc.weight != 0 ? 0 : rect.size.width) + trailingSpace leadingBoundary:paddingLeading leadingCandidateRects:leadingCandidateRects hasWeight:sbvsc.weight != 0 paddingTop:paddingTop];
                     if (leadingPoint.y != CGFLOAT_MAX)
                     {
-                        nextPoint = CGPointMake(CGRectGetMinX(candidateRect), MAX(nextPoint.y, leadingPoint.y));
+                        nextPoint = CGPointMake(CGRectGetMinX(candidateRect), _myCGFloatMax(nextPoint.y, leadingPoint.y));
                         leadingCandidateXBoundary = leadingPoint.x;
                         break;
                     }
@@ -647,7 +634,7 @@
             
             
             rect.origin.x = nextPoint.x - trailingSpace - rect.size.width;
-            rect.origin.y = MIN(nextPoint.y, maxHeight) + topSpace;
+            rect.origin.y = _myCGFloatMin(nextPoint.y, maxHeight) + topSpace;
             
             //如果有智能边界线则找出所有智能边界线。
             if (!isEstimate && self.intelligentBorderline != nil)
@@ -687,7 +674,7 @@
             
             
             //这里有可能子视图本身的宽度会超过布局视图本身，但是我们的候选区域则不存储超过的宽度部分。
-            CGRect cRect = CGRectMake(MAX((rect.origin.x - leadingSpace - horzSpace),paddingLeading), rect.origin.y - topSpace, MIN((rect.size.width + leadingSpace + trailingSpace),(selfSize.width - paddingHorz)), rect.size.height + topSpace + bottomSpace + vertSpace);
+            CGRect cRect = CGRectMake(_myCGFloatMax((rect.origin.x - leadingSpace - horzSpace),paddingLeading), rect.origin.y - topSpace, _myCGFloatMin((rect.size.width + leadingSpace + trailingSpace),(selfSize.width - paddingHorz)), rect.size.height + topSpace + bottomSpace + vertSpace);
             
             //把新的候选区域添加到数组中去。并删除高度小于新候选区域的其他区域
             for (NSInteger i = trailingCandidateRects.count - 1; i >= 0; i--)
@@ -723,6 +710,11 @@
                 
             }
             
+            //记录每一行的最大子视图位置的索引值。
+            if (trailingLastYOffset != rect.origin.y - topSpace)
+            {
+                [lineIndexes addObject:@(idx - 1)];
+            }
             
             [trailingCandidateRects addObject:[NSValue valueWithCGRect:cRect]];
             trailingLastYOffset = rect.origin.y - topSpace;
@@ -739,12 +731,12 @@
             if (sbvsc.clearFloat)
             {
                 //找到最低点。
-                nextPoint.y = MAX(leadingMaxHeight, trailingLastYOffset);
+                nextPoint.y = _myCGFloatMax(leadingMaxHeight, trailingLastYOffset);
                 
                 CGPoint trailingPoint = [self myFindTrailingCandidatePoint:CGRectMake(paddingLeading, nextPoint.y, 0, CGFLOAT_MAX) width:leadingSpace + (sbvsc.weight != 0 ? 0 : rect.size.width) + trailingSpace trailingBoundary:trailingCandidateXBoundary trailingCandidateRects:trailingCandidateRects hasWeight:sbvsc.weight != 0 paddingTop:paddingTop];
                 if (trailingPoint.y != CGFLOAT_MAX)
                 {
-                    nextPoint.y = MAX(leadingMaxHeight, trailingPoint.y);
+                    nextPoint.y = _myCGFloatMax(leadingMaxHeight, trailingPoint.y);
                     trailingCandidateXBoundary = trailingPoint.x;
                 }
             }
@@ -759,7 +751,7 @@
                     CGPoint trailingPoint = [self myFindTrailingCandidatePoint:candidateRect width:leadingSpace + (sbvsc.weight != 0 ? 0 : rect.size.width) + trailingSpace trailingBoundary:selfSize.width - paddingTrailing trailingCandidateRects:trailingCandidateRects hasWeight:sbvsc.weight != 0 paddingTop:paddingTop];
                     if (trailingPoint.y != CGFLOAT_MAX)
                     {
-                        nextPoint = CGPointMake(CGRectGetMaxX(candidateRect), MAX(nextPoint.y, trailingPoint.y));
+                        nextPoint = CGPointMake(CGRectGetMaxX(candidateRect), _myCGFloatMax(nextPoint.y, trailingPoint.y));
                         trailingCandidateXBoundary = trailingPoint.x;
                         break;
                     }
@@ -789,8 +781,8 @@
             }
             
             rect.origin.x = nextPoint.x + leadingSpace;
-            rect.origin.y = MIN(nextPoint.y,maxHeight) + topSpace;
-            
+            rect.origin.y = _myCGFloatMin(nextPoint.y,maxHeight) + topSpace;
+        
             if (!isEstimate && self.intelligentBorderline != nil)
             {
                 //优先绘制左边和上边的。绘制左边的和上边的。
@@ -823,7 +815,7 @@
             }
             
             
-            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, rect.origin.y - topSpace, MIN((rect.size.width + leadingSpace + trailingSpace + horzSpace),(selfSize.width - paddingHorz)), rect.size.height + topSpace + bottomSpace + vertSpace);
+            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, rect.origin.y - topSpace, _myCGFloatMin((rect.size.width + leadingSpace + trailingSpace + horzSpace),(selfSize.width - paddingHorz)), rect.size.height + topSpace + bottomSpace + vertSpace);
             
             
             //把新添加到候选中去。并删除高度小于的候选键。和高度
@@ -856,6 +848,11 @@
                 }
             }
             
+            //记录每一行的最大子视图位置的索引值。
+            if (leadingLastYOffset != rect.origin.y - topSpace)
+            {
+                [lineIndexes addObject:@(idx - 1)];
+            }
             [leadingCandidateRects addObject:[NSValue valueWithCGRect:cRect]];
             leadingLastYOffset = rect.origin.y - topSpace;
             
@@ -912,6 +909,64 @@
         }
         
     }
+    
+    
+    //如果有子视图设置了对齐属性，那么就要对处在同一行内的子视图进行对齐设置。
+    //对齐的规则是以行内最高的子视图作为参考的对象，其他的子视图按照行内最高子视图进行垂直对齐的调整。
+    if (sbvHasAlignment)
+    {
+        //最后一行。
+        if (sbs.count > 0)
+        {
+            [lineIndexes addObject:@(sbs.count - 1)];
+        }
+        
+        NSInteger lineFirstIndex = 0;
+        for (NSNumber *idxnum in lineIndexes)
+        {
+            BOOL lineHasAlignment = NO;
+
+            //计算每行内的最高的子视图，作为行对齐的标准。
+            CGFloat lineMaxHeight = 0;
+            for (NSInteger i = lineFirstIndex; i <= idxnum.integerValue; i++)
+            {
+                UIView *sbv = sbs[i];
+                MyFrame *sbvmyFrame = sbv.myFrame;
+                UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
+                if (sbvmyFrame.height > lineMaxHeight)
+                    lineMaxHeight = sbvmyFrame.height;
+                
+                lineHasAlignment |= ((sbvsc.myAlignment & MyGravity_Horz_Mask) > MyGravity_Vert_Top);
+            }
+            
+            //设置行内的对齐
+            if (lineHasAlignment)
+            {
+                for (NSInteger i = lineFirstIndex; i <= idxnum.integerValue; i++)
+                {
+                    UIView *sbv = sbs[i];
+                    MyFrame *sbvmyFrame = sbv.myFrame;
+                    UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
+                    switch (sbvsc.myAlignment & MyGravity_Horz_Mask) {
+                        case MyGravity_Vert_Center:
+                            sbvmyFrame.top += (lineMaxHeight - sbvmyFrame.height) / 2.0;
+                            break;
+                        case MyGravity_Vert_Bottom:
+                            sbvmyFrame.top += (lineMaxHeight - sbvmyFrame.height);
+                            break;
+                        case MyGravity_Vert_Fill:
+                            sbvmyFrame.height = lineMaxHeight;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            
+            lineFirstIndex = idxnum.integerValue + 1;
+        }
+    }
+    
    
     return selfSize;
 }
@@ -920,10 +975,10 @@
 {
     //对于水平浮动布局来说，最终是从左到右排列，而对于RTL则是从右到左排列，因此这里先抽象定义头尾的概念，然后最后再计算时统一将抽象位置转化为CGRect的左边值。
 
-    CGFloat paddingTop = lsc.topPadding;
-    CGFloat paddingBottom = lsc.bottomPadding;
-    CGFloat paddingLeading = lsc.leadingPadding;
-    CGFloat paddingTrailing = lsc.trailingPadding;
+    CGFloat paddingTop = lsc.myLayoutTopPadding;
+    CGFloat paddingBottom = lsc.myLayoutBottomPadding;
+    CGFloat paddingLeading = lsc.myLayoutLeadingPadding;
+    CGFloat paddingTrailing = lsc.myLayoutTrailingPadding;
     CGFloat paddingHorz = paddingLeading + paddingTrailing;
     CGFloat paddingVert = paddingTop + paddingBottom;
     
@@ -1037,8 +1092,13 @@
     CGFloat maxWidth = paddingLeading;
     CGFloat maxHeight = paddingTop;
     
-    for (UIView *sbv in sbs)
+    //记录是否有子视图设置了对齐，如果设置了对齐就会在后面对每行子视图做对齐处理。
+    BOOL sbvHasAlignment = NO;
+    NSMutableArray<NSNumber*> *lineIndexes = [NSMutableArray<NSNumber*> new];
+    
+    for (NSInteger idx = 0; idx < sbs.count; idx++)
     {
+        UIView *sbv = sbs[idx];
         MyFrame *sbvmyFrame = sbv.myFrame;
         UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
 
@@ -1047,6 +1107,9 @@
         CGFloat bottomSpace = sbvsc.bottomPosInner.absVal;
         CGFloat trailingSpace = sbvsc.trailingPosInner.absVal;
         CGRect rect = sbvmyFrame.frame;
+        
+        //只要有一个子视图设置了对齐，就会做对齐处理，否则不会，这里这样做是为了对后面的对齐计算做优化。
+        sbvHasAlignment |= ((sbvsc.myAlignment & MyGravity_Vert_Mask) > MyGravity_Horz_Left);
         
         if (sbvsc.widthSizeInner.dimeNumVal != nil)
             rect.size.width = sbvsc.widthSizeInner.measure;
@@ -1107,11 +1170,11 @@
             if (sbvsc.clearFloat)
             {
                 //找到最底部的位置。
-                nextPoint.x = MAX(bottomMaxWidth, topLastXOffset);
+                nextPoint.x = _myCGFloatMax(bottomMaxWidth, topLastXOffset);
                 CGPoint topPoint = [self myFindTopCandidatePoint:CGRectMake(nextPoint.x, selfSize.height - paddingBottom, CGFLOAT_MAX, 0) height:topSpace + (sbvsc.weight != 0 ? 0 : rect.size.height) + bottomSpace topBoundary:topCandidateYBoundary topCandidateRects:topCandidateRects hasWeight:sbvsc.weight != 0  paddingLeading:paddingLeading];
                 if (topPoint.x != CGFLOAT_MAX)
                 {
-                    nextPoint.x = MAX(bottomMaxWidth, topPoint.x);
+                    nextPoint.x = _myCGFloatMax(bottomMaxWidth, topPoint.x);
                     topCandidateYBoundary = topPoint.y;
                 }
             }
@@ -1125,7 +1188,7 @@
                     CGPoint topPoint = [self myFindTopCandidatePoint:candidateRect height:topSpace + (sbvsc.weight != 0 ? 0 : rect.size.height) + bottomSpace topBoundary:paddingTop topCandidateRects:topCandidateRects hasWeight:sbvsc.weight != 0 paddingLeading:paddingLeading];
                     if (topPoint.x != CGFLOAT_MAX)
                     {
-                        nextPoint = CGPointMake(MAX(nextPoint.x, topPoint.x),CGRectGetMinY(candidateRect));
+                        nextPoint = CGPointMake(_myCGFloatMax(nextPoint.x, topPoint.x),CGRectGetMinY(candidateRect));
                         topCandidateYBoundary = topPoint.y;
                         break;
                     }
@@ -1145,7 +1208,7 @@
             
             
             rect.origin.y = nextPoint.y - bottomSpace - rect.size.height;
-            rect.origin.x = MIN(nextPoint.x, maxWidth) + leadingSpace;
+            rect.origin.x = _myCGFloatMin(nextPoint.x, maxWidth) + leadingSpace;
             
             //如果有智能边界线则找出所有智能边界线。
             if (!isEstimate && self.intelligentBorderline != nil)
@@ -1185,7 +1248,7 @@
             
             
             //这里有可能子视图本身的高度会超过布局视图本身，但是我们的候选区域则不存储超过的高度部分。
-            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, MAX((rect.origin.y - topSpace - vertSpace),paddingTop), rect.size.width + leadingSpace + trailingSpace + horzSpace, MIN((rect.size.height + topSpace + bottomSpace),(selfSize.height - paddingVert)));
+            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, _myCGFloatMax((rect.origin.y - topSpace - vertSpace),paddingTop), rect.size.width + leadingSpace + trailingSpace + horzSpace, _myCGFloatMin((rect.size.height + topSpace + bottomSpace),(selfSize.height - paddingVert)));
             
             //把新的候选区域添加到数组中去。并删除高度小于新候选区域的其他区域
             for (NSInteger i = bottomCandidateRects.count - 1; i >= 0; i--)
@@ -1219,6 +1282,12 @@
 
             }
             
+            //记录每一列的最大子视图位置的索引值。
+            if (bottomLastXOffset != rect.origin.x - leadingSpace)
+            {
+                [lineIndexes addObject:@(idx - 1)];
+            }
+            
             [bottomCandidateRects addObject:[NSValue valueWithCGRect:cRect]];
             bottomLastXOffset = rect.origin.x - leadingSpace;
             
@@ -1233,12 +1302,12 @@
             if (sbvsc.clearFloat)
             {
                 //找到最低点。
-                nextPoint.x = MAX(topMaxWidth, bottomLastXOffset);
+                nextPoint.x = _myCGFloatMax(topMaxWidth, bottomLastXOffset);
                 
                 CGPoint bottomPoint = [self myFindBottomCandidatePoint:CGRectMake(nextPoint.x, paddingTop,CGFLOAT_MAX,0) height:topSpace + (sbvsc.weight != 0 ? 0: rect.size.height) + bottomSpace bottomBoundary:bottomCandidateYBoundary bottomCandidateRects:bottomCandidateRects hasWeight:sbvsc.weight != 0  paddingLeading:paddingLeading];
                 if (bottomPoint.x != CGFLOAT_MAX)
                 {
-                    nextPoint.x = MAX(topMaxWidth, bottomPoint.x);
+                    nextPoint.x = _myCGFloatMax(topMaxWidth, bottomPoint.x);
                     bottomCandidateYBoundary = bottomPoint.y;
                 }
             }
@@ -1252,7 +1321,7 @@
                     CGPoint bottomPoint = [self myFindBottomCandidatePoint:candidateRect height:topSpace + (sbvsc.weight != 0 ? 0: rect.size.height) + bottomSpace bottomBoundary:selfSize.height - paddingBottom bottomCandidateRects:bottomCandidateRects hasWeight:sbvsc.weight != 0 paddingLeading:paddingLeading];
                     if (bottomPoint.x != CGFLOAT_MAX)
                     {
-                        nextPoint = CGPointMake(MAX(nextPoint.x, bottomPoint.x),CGRectGetMaxY(candidateRect));
+                        nextPoint = CGPointMake(_myCGFloatMax(nextPoint.x, bottomPoint.x),CGRectGetMaxY(candidateRect));
                         bottomCandidateYBoundary = bottomPoint.y;
                         break;
                     }
@@ -1277,7 +1346,7 @@
             }
             
             rect.origin.y = nextPoint.y + topSpace;
-            rect.origin.x = MIN(nextPoint.x,maxWidth) + leadingSpace;
+            rect.origin.x = _myCGFloatMin(nextPoint.x,maxWidth) + leadingSpace;
             
             //如果有智能边界线则找出所有智能边界线。
             if (!isEstimate && self.intelligentBorderline != nil)
@@ -1309,7 +1378,7 @@
             }
             
             
-            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, rect.origin.y - topSpace,rect.size.width + leadingSpace + trailingSpace + horzSpace,MIN((rect.size.height + topSpace + bottomSpace + vertSpace),(selfSize.height - paddingVert)));
+            CGRect cRect = CGRectMake(rect.origin.x - leadingSpace, rect.origin.y - topSpace,rect.size.width + leadingSpace + trailingSpace + horzSpace,_myCGFloatMin((rect.size.height + topSpace + bottomSpace + vertSpace),(selfSize.height - paddingVert)));
             
             
             //把新添加到候选中去。并删除宽度小于的最新候选区域的候选区域
@@ -1345,6 +1414,11 @@
                 
             }
             
+            //记录每一列的最大子视图位置的索引值。
+            if (topLastXOffset != rect.origin.x - leadingSpace)
+            {
+                [lineIndexes addObject:@(idx - 1)];
+            }
             
             [topCandidateRects addObject:[NSValue valueWithCGRect:cRect]];
             topLastXOffset = rect.origin.x - leadingSpace;
@@ -1402,6 +1476,62 @@
             }
         }
         
+    }
+    
+    //如果有子视图设置了对齐属性，那么就要对处在同一列内的子视图进行对齐设置。
+    //对齐的规则是以列内最宽的子视图作为参考的对象，其他的子视图按照列内最宽子视图进行水平对齐的调整。
+    if (sbvHasAlignment)
+    {
+        //最后一列。
+        if (sbs.count > 0)
+        {
+            [lineIndexes addObject:@(sbs.count - 1)];
+        }
+        
+        NSInteger lineFirstIndex = 0;
+        for (NSNumber *idxnum in lineIndexes)
+        {
+            BOOL lineHasAlignment = NO;
+            
+            //计算每列内的最宽的子视图，作为列对齐的标准。
+            CGFloat lineMaxWidth = 0;
+            for (NSInteger i = lineFirstIndex; i <= idxnum.integerValue; i++)
+            {
+                UIView *sbv = sbs[i];
+                MyFrame *sbvmyFrame = sbv.myFrame;
+                UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
+                if (sbvmyFrame.width > lineMaxWidth)
+                    lineMaxWidth = sbvmyFrame.width;
+                
+                lineHasAlignment |= ((sbvsc.myAlignment & MyGravity_Vert_Mask) > MyGravity_Horz_Left);
+            }
+            
+            //设置行内的对齐
+            if (lineHasAlignment)
+            {
+                for (NSInteger i = lineFirstIndex; i <= idxnum.integerValue; i++)
+                {
+                    UIView *sbv = sbs[i];
+                    MyFrame *sbvmyFrame = sbv.myFrame;
+                    UIView *sbvsc = [self myCurrentSizeClassFrom:sbvmyFrame];
+                    switch ([self myConvertLeftRightGravityToLeadingTrailing:sbvsc.myAlignment & MyGravity_Vert_Mask]) {
+                        case MyGravity_Horz_Center:
+                            sbvmyFrame.leading += (lineMaxWidth - sbvmyFrame.width) / 2.0;
+                            break;
+                        case MyGravity_Horz_Trailing:
+                            sbvmyFrame.leading += (lineMaxWidth - sbvmyFrame.width);
+                            break;
+                        case MyGravity_Horz_Fill:
+                            sbvmyFrame.width = lineMaxWidth;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            
+            lineFirstIndex = idxnum.integerValue + 1;
+        }
     }
     
     return selfSize;

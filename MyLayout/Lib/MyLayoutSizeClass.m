@@ -9,6 +9,8 @@
 #import "MyLayoutSizeClass.h"
 #import "MyLayoutPosInner.h"
 #import "MyLayoutSizeInner.h"
+#import "MyGridNode.h"
+#import "MyBaseLayout.h"
 
 @interface MyViewSizeClass()
 
@@ -35,10 +37,6 @@ BOOL _myisRTL = NO;
 {
     return [super init];
 }
-
-
-
-
 
 -(MyLayoutPos*)topPosInner
 {
@@ -81,6 +79,10 @@ BOOL _myisRTL = NO;
     return [MyViewSizeClass isRTL] ? self.leadingPosInner : self.trailingPosInner;
 }
 
+-(MyLayoutPos*)baselinePosInner
+{
+    return _baselinePos;
+}
 
 -(MyLayoutSize*)widthSizeInner
 {
@@ -189,6 +191,17 @@ BOOL _myisRTL = NO;
     return [MyViewSizeClass isRTL] ? self.leadingPos : self.trailingPos;
 }
 
+-(MyLayoutPos*)baselinePos
+{
+    if (_baselinePos == nil)
+    {
+        _baselinePos = [MyLayoutPos new];
+        _baselinePos.view = self.view;
+        _baselinePos.pos = MyGravity_Vert_Baseline;
+    }
+    
+    return _baselinePos;
+}
 
 
 
@@ -421,16 +434,26 @@ BOOL _myisRTL = NO;
         
         if (wrapContentWidth)
         {
+#ifdef MY_USEPREFIXMETHOD
+            self.widthSize.myEqualTo(self.widthSize);
+#else
             self.widthSize.equalTo(self.widthSize);
+#endif
         }
         else
         {
             if (self.widthSizeInner.dimeSelfVal != nil)
+            {
+#ifdef MY_USEPREFIXMETHOD
+                self.widthSizeInner.myEqualTo(nil);
+#else
                 self.widthSizeInner.equalTo(nil);
+#endif
+            }
         }
-
     }
 }
+
 
 -(void)setWrapContentHeight:(BOOL)wrapContentHeight
 {
@@ -505,6 +528,7 @@ BOOL _myisRTL = NO;
     lsc->_trailingPos = [self.trailingPosInner copy];
     lsc->_centerXPos = [self.centerXPosInner copy];
     lsc->_centerYPos = [self.centerYPosInner copy];
+    lsc->_baselinePos = [self.baselinePos copy];
     lsc->_widthSize = [self.widthSizeInner copy];
     lsc->_heightSize = [self.heightSizeInner copy];
     lsc->_wrapWidth = self.wrapWidth;
@@ -532,7 +556,9 @@ BOOL _myisRTL = NO;
     if (self != nil)
     {
         _zeroPadding = YES;
-        
+        _insetsPaddingFromSafeArea = UIRectEdgeLeft | UIRectEdgeRight;
+        _insetLandscapeFringePadding = NO;
+        _layoutTransform = CGAffineTransformIdentity;
     }
     
     return self;
@@ -606,6 +632,162 @@ BOOL _myisRTL = NO;
 }
 
 
+-(CGFloat)myLayoutTopPadding
+{
+    //如果padding值是特殊的值。
+    if (self.topPadding >= MyLayoutPos.safeAreaMargin - 2000 && self.topPadding <= MyLayoutPos.safeAreaMargin + 2000)
+    {
+        
+        CGFloat topPaddingAdd = 20.0; //默认高度是状态栏的高度。
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+        
+        if (@available(iOS 11.0, *)) {
+            topPaddingAdd = self.view.safeAreaInsets.top;
+        }
+#endif
+        return  self.topPadding - MyLayoutPos.safeAreaMargin + topPaddingAdd;
+    }
+    
+    if ((self.insetsPaddingFromSafeArea & UIRectEdgeTop) == UIRectEdgeTop)
+    {
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+       
+        if (@available(iOS 11.0, *)) {
+             return self.topPadding + self.view.safeAreaInsets.top;
+        }
+#endif
+    }
+    
+    return self.topPadding;
+}
+
+-(CGFloat)myLayoutBottomPadding
+{
+    //如果padding值是特殊的值。
+    if (self.bottomPadding >= MyLayoutPos.safeAreaMargin - 2000 && self.bottomPadding <= MyLayoutPos.safeAreaMargin + 2000)
+    {
+        CGFloat bottomPaddingAdd = 0;
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+        
+        if (@available(iOS 11.0, *)) {
+            bottomPaddingAdd = self.view.safeAreaInsets.bottom;
+        }
+#endif
+        return self.bottomPadding - MyLayoutPos.safeAreaMargin + bottomPaddingAdd;
+    }
+    
+    if ((self.insetsPaddingFromSafeArea & UIRectEdgeBottom) == UIRectEdgeBottom )
+    {
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+
+        if (@available(iOS 11.0, *)) {
+
+                return self.bottomPadding + self.view.safeAreaInsets.bottom;
+        }
+#endif
+    }
+    
+    return self.bottomPadding;
+}
+
+-(CGFloat)myLayoutLeadingPadding
+{
+    if (self.leadingPadding >= MyLayoutPos.safeAreaMargin - 2000 && self.leadingPadding <= MyLayoutPos.safeAreaMargin + 2000)
+    {
+        CGFloat leadingPaddingAdd = 0;
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+        
+        if (@available(iOS 11.0, *)) {
+            leadingPaddingAdd = self.view.safeAreaInsets.left; //因为这里左右的缩进都是一样的，因此不需要考虑RTL的情况。
+        }
+#endif
+        return self.leadingPadding - MyLayoutPos.safeAreaMargin + leadingPaddingAdd;
+    }
+
+    
+    CGFloat inset = 0;
+    
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+
+    if (@available(iOS 11.0, *)) {
+        
+        UIRectEdge edge = [MyViewSizeClass isRTL]? UIRectEdgeRight:UIRectEdgeLeft;
+#if TARGET_OS_IOS
+        UIDeviceOrientation devori = [MyViewSizeClass isRTL]? UIDeviceOrientationLandscapeLeft: UIDeviceOrientationLandscapeRight;
+#endif
+        if ((self.insetsPaddingFromSafeArea & edge) == edge)
+        {
+#if TARGET_OS_IOS
+
+            //如果只缩进刘海那一边。并且同时设置了左右缩进，并且当前刘海方向是尾部那么就不缩进了。
+            if (self.insetLandscapeFringePadding &&
+                (self.insetsPaddingFromSafeArea & (UIRectEdgeLeft | UIRectEdgeRight)) == (UIRectEdgeLeft | UIRectEdgeRight) &&
+                [UIDevice currentDevice].orientation == devori)
+            {
+                inset = 0;
+            }
+            else
+#endif
+                inset = [MyViewSizeClass isRTL]? self.view.safeAreaInsets.right : self.view.safeAreaInsets.left;
+        }
+    }
+#endif
+    
+    return self.leadingPadding + inset;
+}
+
+-(CGFloat)myLayoutTrailingPadding
+{
+    if (self.trailingPadding >= MyLayoutPos.safeAreaMargin - 2000 && self.trailingPadding <= MyLayoutPos.safeAreaMargin + 2000)
+    {
+        CGFloat trailingPaddingAdd = 0;
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+        
+        if (@available(iOS 11.0, *)) {
+            trailingPaddingAdd = self.view.safeAreaInsets.right;
+        }
+#endif
+        return self.trailingPadding - MyLayoutPos.safeAreaMargin + trailingPaddingAdd;
+    }
+
+    
+    CGFloat inset = 0;
+    
+#if (__IPHONE_OS_VERSION_MAX_ALLOWED >= 110000) || (__TV_OS_VERSION_MAX_ALLOWED >= 110000)
+
+    if (@available(iOS 11.0, *)) {
+        UIRectEdge edge = [MyViewSizeClass isRTL]? UIRectEdgeLeft:UIRectEdgeRight;
+#if TARGET_OS_IOS
+        UIDeviceOrientation devori = [MyViewSizeClass isRTL]? UIDeviceOrientationLandscapeRight: UIDeviceOrientationLandscapeLeft;
+#endif
+        if ((self.insetsPaddingFromSafeArea & edge) == edge)
+        {
+#if TARGET_OS_IOS
+            //如果只缩进刘海那一边。并且同时设置了左右缩进，并且当前刘海方向是头部那么就不缩进了。
+            if (self.insetLandscapeFringePadding &&
+                (self.insetsPaddingFromSafeArea & (UIRectEdgeLeft | UIRectEdgeRight)) == (UIRectEdgeLeft | UIRectEdgeRight) &&
+                [UIDevice currentDevice].orientation == devori)
+            {
+                inset = 0;
+            }
+            else
+#endif
+                inset = [MyViewSizeClass isRTL]? self.view.safeAreaInsets.left : self.view.safeAreaInsets.right;
+        }
+    }
+#endif
+    
+    return self.trailingPadding + inset;
+}
+
+-(CGFloat)myLayoutLeftPadding
+{
+    return [MyViewSizeClass isRTL] ? [self myLayoutTrailingPadding] : [self myLayoutLeadingPadding];
+}
+-(CGFloat)myLayoutRightPadding
+{
+    return [MyViewSizeClass isRTL] ? [self myLayoutLeadingPadding] : [self myLayoutTrailingPadding];
+}
 
 
 -(CGFloat)subviewSpace
@@ -628,8 +810,11 @@ BOOL _myisRTL = NO;
     lsc.bottomPadding = self.bottomPadding;
     lsc.trailingPadding = self.trailingPadding;
     lsc.zeroPadding = self.zeroPadding;
+    lsc.insetsPaddingFromSafeArea = self.insetsPaddingFromSafeArea;
+    lsc.insetLandscapeFringePadding = self.insetLandscapeFringePadding;
     lsc.gravity = self.gravity;
     lsc.reverseLayout = self.reverseLayout;
+    lsc.layoutTransform = self.layoutTransform;
     lsc.subviewVSpace = self.subviewVSpace;
     lsc.subviewHSpace = self.subviewHSpace;
     
@@ -645,7 +830,7 @@ BOOL _myisRTL = NO;
                NSStringFromUIEdgeInsets(self.padding),
                self.zeroPadding?@"YES":@"NO",
                self.gravity,
-               self.reverseLayout ? @"YES":@"NO",
+               self.reverseLayout?@"YES":@"NO",
                self.subviewVSpace,
                self.subviewHSpace
                ];
@@ -801,5 +986,346 @@ BOOL _myisRTL = NO;
 @end
 
 @implementation MyPathLayoutViewSizeClass
+
+@end
+
+
+@interface MyGridLayoutViewSizeClass()<MyGridNode>
+
+@property(nonatomic, strong) MyGridNode *rootGrid;
+
+@end
+
+
+@implementation MyGridLayoutViewSizeClass
+
+
+-(MyGridNode*)rootGrid
+{
+    if (_rootGrid == nil)
+    {
+        _rootGrid = [[MyGridNode alloc] initWithMeasure:0 superGrid:nil];
+    }
+    return _rootGrid;
+}
+
+//添加行栅格，返回新的栅格。
+-(id<MyGrid>)addRow:(CGFloat)measure
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addRow:measure];
+    node.superGrid = self;
+    return node;
+}
+
+//添加列栅格，返回新的栅格。
+-(id<MyGrid>)addCol:(CGFloat)measure
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addCol:measure];
+    node.superGrid = self;
+    return node;
+}
+
+//添加栅格，返回被添加的栅格。这个方法和下面的cloneGrid配合使用可以用来构建那些需要重复添加栅格的场景。
+-(id<MyGrid>)addRowGrid:(id<MyGrid>)grid
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addRowGrid:grid];
+    node.superGrid = self;
+    return node;
+}
+
+-(id<MyGrid>)addColGrid:(id<MyGrid>)grid
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addColGrid:grid];
+    node.superGrid = self;
+    return node;
+}
+
+-(id<MyGrid>)addRowGrid:(id<MyGrid>)grid measure:(CGFloat)measure
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addRowGrid:grid measure:measure];
+    node.superGrid = self;
+    return node;
+    
+}
+
+-(id<MyGrid>)addColGrid:(id<MyGrid>)grid measure:(CGFloat)measure
+{
+    id<MyGridNode> node = (id<MyGridNode>)[self.rootGrid addColGrid:grid measure:measure];
+    node.superGrid = self;
+    return node;
+    
+}
+
+
+//克隆出一个新栅格以及其下的所有子栅格。
+-(id<MyGrid>)cloneGrid
+{
+    return nil;
+}
+
+//从父栅格中删除。
+-(void)removeFromSuperGrid
+{
+}
+
+//得到父栅格。
+-(id<MyGrid>)superGrid
+{
+    return nil;
+}
+
+-(void)setSuperGrid:(id<MyGridNode>)superGrid
+{
+    
+}
+
+-(BOOL)placeholder
+{
+    return NO;
+}
+
+-(void)setPlaceholder:(BOOL)placeholder
+{
+}
+
+-(BOOL)anchor
+{
+    return NO;
+}
+
+-(void)setAnchor:(BOOL)anchor
+{
+    //do nothing
+}
+
+-(MyGravity)overlap
+{
+    return self.gravity;
+}
+
+-(void)setOverlap:(MyGravity)overlap
+{
+    self.gravity = overlap;
+}
+
+
+-(NSInteger)tag
+{
+    return self.view.tag;
+}
+
+-(void)setTag:(NSInteger)tag
+{
+    self.view.tag = tag;
+}
+
+-(id)actionData
+{
+    return self.rootGrid.actionData;
+}
+
+-(void)setActionData:(id)actionData
+{
+    self.rootGrid.actionData = actionData;
+}
+
+-(void)setTarget:(id)target action:(SEL)action
+{
+    //do nothing.
+}
+
+//得到所有子栅格
+-(NSArray<id<MyGrid>> *)subGrids
+{
+    return self.rootGrid.subGrids;
+}
+
+
+-(void)setSubGrids:(NSMutableArray *)subGrids
+{
+    self.rootGrid.subGrids = subGrids;
+}
+
+-(MySubGridsType)subGridsType
+{
+    return self.rootGrid.subGridsType;
+}
+
+-(void)setSubGridsType:(MySubGridsType)subGridsType
+{
+    self.rootGrid.subGridsType = subGridsType;
+}
+
+
+-(MyBorderline*)topBorderline
+{
+    return nil;
+}
+
+-(void)setTopBorderline:(MyBorderline *)topBorderline
+{
+}
+
+
+-(MyBorderline*)bottomBorderline
+{
+    return nil;
+}
+
+-(void)setBottomBorderline:(MyBorderline *)bottomBorderline
+{
+}
+
+
+-(MyBorderline*)leftBorderline
+{
+    return nil;
+}
+
+-(void)setLeftBorderline:(MyBorderline *)leftBorderline
+{
+}
+
+
+-(MyBorderline*)rightBorderline
+{
+    return nil;
+}
+
+-(void)setRightBorderline:(MyBorderline *)rightBorderline
+{
+}
+
+-(MyBorderline*)leadingBorderline
+{
+    return nil;
+}
+
+-(void)setLeadingBorderline:(MyBorderline *)leadingBorderline
+{
+    
+}
+
+-(MyBorderline*)trailingBorderline
+{
+    return nil;
+}
+
+-(void)setTrailingBorderline:(MyBorderline *)trailingBorderline
+{
+    
+}
+
+
+-(NSDictionary*)gridDictionary
+{
+    return [MyGridNode translateGridNode:self toGridDictionary:[NSMutableDictionary new]];
+}
+
+-(void)setGridDictionary:(NSDictionary *)gridDictionary
+{
+    MyGridNode *rootNode = self.rootGrid;
+    [rootNode.subGrids removeAllObjects];
+    rootNode.subGridsType = MySubGridsType_Unknown;
+    
+    [self.view setNeedsLayout];
+    
+    if (gridDictionary == nil)
+        return;
+    
+    [MyGridNode translateGridDicionary:gridDictionary toGridNode:self];
+}
+
+-(CGFloat)measure
+{
+    return MyLayoutSize.fill;
+    //return self.rootGrid.measure;
+}
+
+-(void)setMeasure:(CGFloat)measure
+{
+    //self.rootGrid.measure = measure;
+}
+
+-(CGRect)gridRect
+{
+    return self.rootGrid.gridRect;
+}
+
+-(void)setGridRect:(CGRect)gridRect
+{
+    self.rootGrid.gridRect = gridRect;
+}
+
+//更新格子尺寸。
+-(CGFloat)updateGridSize:(CGSize)superSize superGrid:(id<MyGridNode>)superGrid withMeasure:(CGFloat)measure
+{
+    return [self.rootGrid updateGridSize:superSize superGrid:superGrid withMeasure:measure];
+}
+
+-(CGFloat)updateGridOrigin:(CGPoint)superOrigin superGrid:(id<MyGridNode>)superGrid withOffset:(CGFloat)offset
+{
+    return [self.rootGrid updateGridOrigin:superOrigin superGrid:superGrid withOffset:offset];
+}
+
+
+-(UIView*)gridLayoutView
+{
+    return self.view;
+}
+
+-(SEL)gridAction
+{
+    return nil;
+}
+
+-(void)setBorderlineNeedLayoutIn:(CGRect)rect withLayer:(CALayer *)layer
+{
+    [self.rootGrid setBorderlineNeedLayoutIn:rect withLayer:layer];
+}
+
+-(void)showBorderline:(BOOL)show
+{
+    [self.rootGrid showBorderline:show];
+}
+
+-(id<MyGridNode>)gridHitTest:(CGPoint)point
+{
+    return [self.rootGrid gridHitTest:point];
+}
+
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    //do nothing;
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    //do nothing;
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    //do nothing;
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    //do nothing;
+}
+
+
+
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    MyGridLayoutViewSizeClass *lsc = [super copyWithZone:zone];
+    lsc->_rootGrid = (MyGridNode*)[self.rootGrid cloneGrid];
+    
+    
+    return lsc;
+}
+
 
 @end

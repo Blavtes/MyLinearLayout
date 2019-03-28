@@ -9,6 +9,7 @@
 #import "MyLayoutSize.h"
 #import "MyLayoutSizeInner.h"
 #import "MyBaseLayout.h"
+#import "MyLayoutMath.h"
 
 
 @implementation MyLayoutSize
@@ -19,6 +20,23 @@
     MyLayoutSize *_lBoundVal;
     MyLayoutSize *_uBoundVal;
 }
+
+
++(CGFloat)wrap
+{
+    return -1;
+}
+
++(CGFloat)fill
+{
+    return -2;
+}
+
++(CGFloat)average
+{
+    return -3;
+}
+
 
 -(id)init
 {
@@ -243,7 +261,7 @@
     return self;
 }
 
-#pragma mark -- Private Method
+#pragma mark -- Private Methods
 
 
 -(NSNumber*)dimeNumVal
@@ -478,16 +496,14 @@
 
 
 
-
-
 -(CGFloat) measure
 {
-    return self.isActive ? self.dimeNumVal.doubleValue * _multiVal + _addVal : 0;
+    return self.isActive ? _myCGFloatFma(self.dimeNumVal.doubleValue,  _multiVal,  _addVal) : 0;
 }
 
 -(CGFloat)measureWith:(CGFloat)size
 {
-    return self.isActive ?  size * _multiVal + _addVal : size;
+    return self.isActive ?  _myCGFloatFma(size, _multiVal , _addVal) : size;
 }
 
 
@@ -530,7 +546,7 @@
     
 }
 
-#pragma mark -- Override Method
+#pragma mark -- Override Methods
 
 -(NSString*)description
 {

@@ -7,8 +7,10 @@
 //
 
 #import "ViewController.h"
+#import "DetailViewController.h"
 #import "CFTool.h"
 #import "MyLayout.h"
+
 #import "LLTest1ViewController.h"
 #import "LLTest2ViewController.h"
 #import "LLTest3ViewController.h"
@@ -30,6 +32,8 @@
 #import "TLTest1ViewController.h"
 #import "TLTest2ViewController.h"
 #import "TLTest3ViewController.h"
+#import "TLTest4ViewController.h"
+
 
 #import "FLLTest1ViewController.h"
 #import "FLLTest2ViewController.h"
@@ -37,6 +41,8 @@
 #import "FLLTest4ViewController.h"
 #import "FLLTest5ViewController.h"
 #import "FLLTest6ViewController.h"
+#import "FLLTest7ViewController.h"
+#import "FLLTest8ViewController.h"
 
 
 #import "AllTest1ViewController.h"
@@ -47,6 +53,9 @@
 #import "AllTest6ViewController.h"
 #import "AllTest7ViewController.h"
 #import "AllTest8ViewController.h"
+#import "AllTest9ViewController.h"
+#import "AllTest10ViewController.h"
+#import "AllTest11ViewController.h"
 
 
 #import "FOLTest1ViewController.h"
@@ -55,6 +64,8 @@
 #import "FOLTest4ViewController.h"
 #import "FOLTest5ViewController.h"
 #import "FOLTest6ViewController.h"
+#import "FOLTest7ViewController.h"
+
 
 #import "PLTest1ViewController.h"
 #import "PLTest2ViewController.h"
@@ -62,153 +73,237 @@
 #import "PLTest4ViewController.h"
 #import "PLTest5ViewController.h"
 
+#import "GLTest1ViewController.h"
+#import "GLTest2ViewController.h"
+#import "GLTest3ViewController.h"
+#import "GLTest4ViewController.h"
+#import "GLTest5ViewController.h"
+
+
 @interface ViewController ()
 
-@property(nonatomic, strong) NSArray *demoVCLists;
+@property(nonatomic, strong) NSArray *demoTypeList;
 
 @end
 
 
 @implementation ViewController
 
--(NSArray*)demoVCLists
+-(NSArray*)demoTypeList
 {
-    if (_demoVCLists == nil)
+    if (_demoTypeList == nil)
     {
-        _demoVCLists = @[@{@"title":NSLocalizedString(@"1.LinearLayout - Vert&Horz", @""),
-                           @"class":[LLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.LinearLayout - Combine with UIScrollView", @""),
-                           @"class":[LLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.LinearLayout - Gravity&Fill", @""),
-                           @"class":[LLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.LinearLayout - Wrap content", @""),
-                           @"class":[LLTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"5.LinearLayout - Weight & Relative margin", @""),
-                           @"class":[LLTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"6.LinearLayout - Size limit & Flexed margin", @""),
-                           @"class":[LLTest6ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"7.LinearLayout - Average size&space", @""),
-                           @"class":[LLTest7ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.FrameLayout - Gravity&Fill", @""),
-                           @"class":[FLTest1ViewController class],
-                           },
-                         @{@"title":NSLocalizedString(@"2.FrameLayout - Complex UI", @""),
-                           @"class":[FLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.RelativeLayout - Constraint&Dependence", @""),
-                           @"class":[RLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.RelativeLayout - Prorate size", @""),
-                           @"class":[RLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.RelativeLayout - Centered", @""),
-                           @"class":[RLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.RelativeLayout - Scroll&Dock", @""),
-                           @"class":[RLTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"5.RelativeLayout - Boundary limit", @""),
-                           @"class":[RLTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.TableLayout - Vert", @""),
-                           @"class":[TLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.TableLayout - Waterfall(Horz)", @""),
-                           @"class":[TLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.TableLayout - Intelligent Borderline", @""),
-                           @"class":[TLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.FlowLayout - Regular arrangement", @""),
-                           @"class":[FLLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.FlowLayout - Tag cloud", @""),
-                           @"class":[FLLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.FlowLayout - Drag", @""),
-                           @"class":[FLLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.FlowLayout - Weight", @""),
-                           @"class":[FLLTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"5.FlowLayout - Paging", @""),
-                           @"class":[FLLTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"6.FlowLayout - Scroll", @""),
-                           @"class":[FLLTest6ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.FloatLayout - Float", @""),
-                           @"class":[FOLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.FloatLayout - Jagged", @""),
-                           @"class":[FOLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.FloatLayout - Card news", @""),
-                           @"class":[FOLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.FloatLayout - Tag cloud", @""),
-                           @"class":[FOLTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"5.FloatLayout - Title & Description", @""),
-                           @"class":[FOLTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"6.FloatLayout - User Profiles", @""),
-                           @"class":[FOLTest6ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.PathLayout - Animations", @""),
-                           @"class":[PLTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.PathLayout - Curves", @""),
-                           @"class":[PLTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.PathLayout - Menu in Circle", @""),
-                           @"class":[PLTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.PathLayout - Fan", @""),
-                           @"class":[PLTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"5.PathLayout - Roulette", @""),
-                           @"class":[PLTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.UITableView - Dynamic height", @""),
-                           @"class":[AllTest1ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.UITableView - Static height", @""),
-                           @"class":[AllTest2ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"3.Replacement of UITableView", @""),
-                           @"class":[AllTest3ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"4.Replacement of UICollectionView", @""),
-                           @"class":[AllTest4ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"1.SizeClass - Demo1", @""),
-                           @"class":[AllTest5ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"2.SizeClass - Demo2", @""),
-                           @"class":[AllTest6ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"❁1.Screen perfect fit - Demo1", @""),
-                           @"class":[AllTest7ViewController class]
-                           },
-                         @{@"title":NSLocalizedString(@"❁2.Screen perfect fit - Demo2", @""),
-                           @"class":[AllTest8ViewController class]
-                           }
-                         ];
-        
-        
-        
+        _demoTypeList = @[@{@"type_title":@"线性布局(LinearLayout)",
+                            @"type_desc":@"ll.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.LinearLayout - Vert&Horz", @""),
+                                               @"class":[LLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.LinearLayout - Combine with UIScrollView", @""),
+                                               @"class":[LLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.LinearLayout - Gravity&Fill", @""),
+                                               @"class":[LLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.LinearLayout - Wrap content", @""),
+                                               @"class":[LLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.LinearLayout - Weight & Relative margin", @""),
+                                               @"class":[LLTest5ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"6.LinearLayout - Size limit & Flexed margin", @""),
+                                               @"class":[LLTest6ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"7.LinearLayout - Average size&space", @""),
+                                               @"class":[LLTest7ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"框架布局(FrameLayout)",
+                            @"type_desc":@"fl.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.FrameLayout - Gravity&Fill", @""),
+                                               @"class":[FLTest1ViewController class],
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.FrameLayout - Complex UI", @""),
+                                               @"class":[FLTest2ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"相对布局(RelativeLayout)",
+                            @"type_desc":@"rl.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.RelativeLayout - Constraint&Dependence", @""),
+                                               @"class":[RLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.RelativeLayout - Prorate size", @""),
+                                               @"class":[RLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.RelativeLayout - Centered", @""),
+                                               @"class":[RLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.RelativeLayout - Scroll&Dock", @""),
+                                               @"class":[RLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.RelativeLayout - Boundary limit", @""),
+                                               @"class":[RLTest5ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"表格布局(TableLayout)",
+                            @"type_desc":@"tl.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.TableLayout - Vert", @""),
+                                               @"class":[TLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.TableLayout - Waterfall(Horz)", @""),
+                                               @"class":[TLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.TableLayout - Intelligent Borderline", @""),
+                                               @"class":[TLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.TableLayout - Style&Alignment", @""),
+                                               @"class":[TLTest4ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"流式布局(FlowLayout)",
+                            @"type_desc":@"fll.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.FlowLayout - Regular arrangement", @""),
+                                               @"class":[FLLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.FlowLayout - Tag cloud", @""),
+                                               @"class":[FLLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.FlowLayout - Drag", @""),
+                                               @"class":[FLLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.FlowLayout - Weight", @""),
+                                               @"class":[FLLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.FlowLayout - Paging", @""),
+                                               @"class":[FLLTest5ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"6.FlowLayout - Scroll", @""),
+                                               @"class":[FLLTest6ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"7.FlowLayout - Auto Arrange", @""),
+                                               @"class":[FLLTest7ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"8.FlowLayout - Flex space", @""),
+                                               @"class":[FLLTest8ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"浮动布局(FloatLayout)",
+                            @"type_desc":@"flo.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.FloatLayout - Float", @""),
+                                               @"class":[FOLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.FloatLayout - Jagged", @""),
+                                               @"class":[FOLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.FloatLayout - Card news", @""),
+                                               @"class":[FOLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.FloatLayout - Tag cloud", @""),
+                                               @"class":[FOLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.FloatLayout - Title & Description", @""),
+                                               @"class":[FOLTest5ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"6.FloatLayout - User Profiles", @""),
+                                               @"class":[FOLTest6ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"7.FloatLayout - Alignment", @""),
+                                               @"class":[FOLTest7ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"路径布局(PathLayout)",
+                            @"type_desc":@"pl.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.PathLayout - Animations", @""),
+                                               @"class":[PLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.PathLayout - Curves", @""),
+                                               @"class":[PLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.PathLayout - Menu in Circle", @""),
+                                               @"class":[PLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.PathLayout - Fan", @""),
+                                               @"class":[PLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.PathLayout - Roulette", @""),
+                                               @"class":[PLTest5ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"栅格布局(GridLayout)",
+                            @"type_desc":@"gl.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.GridLayout - Row&Col gird", @""),
+                                               @"class":[GLTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.GridLayout - Dynamic layout", @""),
+                                               @"class":[GLTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.GridLayout - ViewGroup", @""),
+                                               @"class":[GLTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.GridLayout - JSON1", @""),
+                                               @"class":[GLTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"5.GridLayout - JSON2", @""),
+                                               @"class":[GLTest5ViewController class]
+                                               }
+                                             ]
+                            },
+                          
+                          @{@"type_title":@"综合布局(All Layout)",
+                            @"type_desc":@"all.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.UITableView - Dynamic height", @""),
+                                               @"class":[AllTest1ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.UITableView - Static height", @""),
+                                               @"class":[AllTest2ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"3.Replacement of UITableView", @""),
+                                               @"class":[AllTest3ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"4.Replacement of UICollectionView", @""),
+                                               @"class":[AllTest4ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"1.SizeClass - Demo1", @""),
+                                               @"class":[AllTest5ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"2.SizeClass - Demo2", @""),
+                                               @"class":[AllTest6ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁1.Screen perfect fit - Demo1", @""),
+                                               @"class":[AllTest7ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁2.Screen perfect fit - Demo2", @""),
+                                               @"class":[AllTest8ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁3.UICollectionView height self-adaption", @""),
+                                               @"class":[AllTest9ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁4.Circle of friends height self-adaption", @""),
+                                               @"class":[AllTest10ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁5.Subviews layout transform", @""),
+                                               @"class":[AllTest11ViewController class]
+                                               }
+                                             ]
+                            }
+                          ];
         
     }
     
-    return _demoVCLists;
+    return _demoTypeList;
 }
 
 - (void)viewDidLoad {
@@ -266,7 +361,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.demoVCLists.count;
+    return self.demoTypeList.count;
 }
 
 // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
@@ -281,8 +376,10 @@
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
     cell.textLabel.font = [CFTool font:15];
     cell.textLabel.textColor = [CFTool color:4];
-    cell.textLabel.text = self.demoVCLists[indexPath.row][@"title"];
+    cell.textLabel.text = self.demoTypeList[indexPath.row][@"type_title"];
     cell.textLabel.textAlignment = [MyBaseLayout isRTL] ? NSTextAlignmentRight : NSTextAlignmentLeft;
+    
+    cell.imageView.image = [UIImage imageNamed:self.demoTypeList[indexPath.row][@"type_desc"]];
     return cell;
     
 }
@@ -292,9 +389,9 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    UIViewController *demoVC = [[self.demoVCLists[indexPath.row][@"class"] alloc] init];
-    demoVC.title = self.demoVCLists[indexPath.row][@"title"];
-    [self.navigationController pushViewController:demoVC animated:YES];
+    DetailViewController *detailVC = [[DetailViewController alloc] initWithDemoVCList:self.demoTypeList[indexPath.row][@"type_vclist"]];
+    detailVC.title = self.demoTypeList[indexPath.row][@"type_title"];
+    [self.navigationController pushViewController:detailVC animated:YES];
 
 }
 

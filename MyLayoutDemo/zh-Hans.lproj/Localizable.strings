@@ -8,6 +8,7 @@
 
 //Category
 "Category"="目录";
+"If you select \"Present\", than you can touch topleft corner of Status bar to dissmis the view controller" ="如果你选择了弹出则可以点击状态栏的左上角区域退出视图控制器";
 "1.LinearLayout - Vert&Horz" = "1.线性布局-垂直布局和水平布局";
 "2.LinearLayout - Combine with UIScrollView" = "2.线性布局-和UIScrollView的结合";
 "3.LinearLayout - Gravity&Fill" = "3.线性布局-子视图的停靠和填充";
@@ -25,23 +26,32 @@
 "1.TableLayout - Vert" = "1.表格布局-垂直表格";
 "2.TableLayout - Waterfall(Horz)" = "2.表格布局-水平表格实现瀑布流";
 "3.TableLayout - Intelligent Borderline" = "3.表格布局-表格和智能边界线";
+"4.TableLayout - Style&Alignment" = "4.表格布局-多种样式和对齐";
 "1.FlowLayout - Regular arrangement" = "1.流式布局-有规律的子视图排列";
 "2.FlowLayout - Tag cloud" = "2.流式布局-标签流";
 "3.FlowLayout - Drag" = "3.流式布局-子视图的拖拽调整功能";
 "4.FlowLayout - Weight" = "4.流式布局-对线性布局的替代方案";
 "5.FlowLayout - Paging" = "5.流式布局-对分页滚动的支持";
 "6.FlowLayout - Scroll" = "6.流式布局-不同方向的滚动";
+"7.FlowLayout - Auto Arrange" = "7.流式布局-自动布局和对瀑布流的支持";
+"8.FlowLayout - Flex space" = "8.流式布局-浮动间距";
 "1.FloatLayout - Float" = "1.浮动布局-浮动效果的演示";
 "2.FloatLayout - Jagged" = "2.浮动布局-仿天猫淘宝首页实现" ;
 "3.FloatLayout - Card news" = "3.浮动布局-仿ZAKER今日头条实现";
 "4.FloatLayout - Tag cloud" = "4.浮动布局-标签流";
 "5.FloatLayout - Title & Description" = "5.浮动布局-左右排列的文本";
 "6.FloatLayout - User Profiles"="6.浮动布局-各种用户配置的实现";
+"7.FloatLayout - Alignment"="7.浮动布局-行内对齐";
 "1.PathLayout - Animations" = "1.路径布局-各种动画效果";
 "2.PathLayout - Curves"="2.路径布局-各种函数曲线";
 "3.PathLayout - Menu in Circle"="3.路径布局-圆环型菜单";
 "4.PathLayout - Fan"="4.路径布局-扇子效果";
 "5.PathLayout - Roulette"="5.路径布局-转动的轮盘";
+"1.GridLayout - Row&Col gird"="1.栅格布局-实现多层视图嵌套";
+"2.GridLayout - Dynamic layout"="2.栅格布局-仿今日头条实现动态更新";
+"3.GridLayout - ViewGroup"="3.栅格布局-用视图组实现仿京东首页";
+"4.GridLayout - JSON1"="4.栅格布局-用JSON语言来描述布局1";
+"5.GridLayout - JSON2"="5.栅格布局-用JSON语言来描述布局2";
 "1.UITableView - Dynamic height" = "1.综合布局-布局和UITableView(动态高度)";
 "2.UITableView - Static height" = "2.综合布局-布局和UITableView(静态高度)";
 "3.Replacement of UITableView" = "3.综合布局-UITableView的替换方案";
@@ -50,7 +60,9 @@
 "2.SizeClass - Demo2" = "2.SizeClass-不同屏幕下的布局样式2";
 "❁1.Screen perfect fit - Demo1" = "❁1.界面的完美适配DEMO";
 "❁2.Screen perfect fit - Demo2" = "❁2.界面的完美适配DEMO2";
-
+"❁3.UICollectionView height self-adaption" = "❁3.UICollectionView 高度自适应";
+"❁4.Circle of friends height self-adaption" = "❁4.朋友圈 高度自适应";
+"❁5.Subviews layout transform" = "❁5.布局内子视图的整体变换";
 //LLTest1ViewController
 "vertical(from top to bottom)" = "垂直布局(从上到下)";
 "left margin" = "左边边距";
@@ -137,7 +149,7 @@
 "average 1/3 width\nturn above switch"="平均1/3宽度\n切换上面开关试试";
 "average 1/3 width\nhide me"="平均1/3宽度\n点击我隐藏";
 "average 1/3 width\nshow me"="平均1/3宽度\n点击我显示";
-"width equal to 260"="固定宽度为260";
+"width equal to 160"="固定宽度为160";
 "1/2 with of free superview"="剩余1/2宽度";
 "20% with of superview"="20%比例宽度";
 "30% with of superview"="30%比例宽度";
@@ -218,9 +230,9 @@
 "the layoutIfNeeded is not need to call when you use frame to set layout view's size"="如果通过frame设置了明确的尺寸则不需要调用layoutIfNeeded";
 
 "A single line text"="只有一行文本";
-"This Demo is used to introduce the solution when use layout view to realize the UITableViewCell's dynamic height. We only need to use the layout view's estimateLayoutRect method to evaluate the size of the layout view. and you can touch the Cell to shrink the height when the Cell has a picture."="这个例子用于介绍布局视图实现UITableViewCell动态高度的解决方案。我们只需要使用布局视图的estimateLayoutRect方法就可以对布局视图的尺寸进行评估。同时您可以在有图片的Cell中触摸查看自动伸缩的场景。";
+"This Demo is used to introduce the solution when use layout view to realize the UITableViewCell's dynamic height. We only need to use the layout view's sizeThatFits method to evaluate the size of the layout view. and you can touch the Cell to shrink the height when the Cell has a picture."="这个例子用于介绍布局视图实现UITableViewCell动态高度的解决方案。我们只需要使用布局视图的sizeThatFits方法就可以对布局视图的尺寸进行评估。同时您可以在有图片的Cell中触摸查看自动伸缩的场景。";
 
-"Through layout view's estimateLayoutRect method can assess a UITableViewCell dynamic height.EstimateLayoutRect just to evaluate layout size but not set the size of the layout. here don't preach the width of 0 is the cause of the above UITableViewCell set the default width is 320 (regardless of any screen), so if we pass the width of 0 will be according to the width of 320 to evaluate UITableViewCell dynamic height, so when in 375 and 375 the width of the assessment of height will not be right, so here you need to specify the real width dimension;And the height is set to 0 mean height is not a fixed value need to evaluate. you can use all type layout view to realize UITableViewCell."="通过布局视图的estimateLayoutRect函数能够评估出UITableViewCell的动态高度。estimateLayoutRect并不会进行布局而只是评估布局的尺寸，这里的宽度不传0的原因是上面的UITableViewCell在建立时默认的宽度是320(不管任何尺寸都如此),因此如果我们传递了宽度为0的话则会按320的宽度来评估UITableViewCell的动态高度，这样当在375和414的宽度时评估出来的高度将不会正确，因此这里需要指定出真实的宽度尺寸；而高度设置为0的意思是表示高度不是固定值需要评估出来。UITableViewCell的动态高度评估不局限于线性布局，其他布局也是同样适用。";
+"Through layout view's sizeThatFits method can assess a UITableViewCell dynamic height.EstimateLayoutRect just to evaluate layout size but not set the size of the layout. here don't preach the width of 0 is the cause of the above UITableViewCell set the default width is 320 (regardless of any screen), so if we pass the width of 0 will be according to the width of 320 to evaluate UITableViewCell dynamic height, so when in 375 and 375 the width of the assessment of height will not be right, so here you need to specify the real width dimension;And the height is set to 0 mean height is not a fixed value need to evaluate. you can use all type layout view to realize UITableViewCell."="通过布局视图的sizeThatFits函数能够评估出UITableViewCell的动态高度。sizeThatFits并不会进行布局而只是评估布局的尺寸，这里的宽度不传0的原因是上面的UITableViewCell在建立时默认的宽度是320(不管任何尺寸都如此),因此如果我们传递了宽度为0的话则会按320的宽度来评估UITableViewCell的动态高度，这样当在375和414的宽度时评估出来的高度将不会正确，因此这里需要指定出真实的宽度尺寸；而高度设置为0的意思是表示高度不是固定值需要评估出来。UITableViewCell的动态高度评估不局限于线性布局，其他布局也是同样适用。";
 
 "This section not only has text but also hav picture. and picture below at text, text will wrap"="这是一段既有文本也有图片，文本在上面，图片在下面。文本会自动的进行换行，而图片则在文本下面居中显示";
 
@@ -261,3 +273,14 @@
 //AllTest8ViewController
 "Pop layoutview at center"="居中弹出布局视图";
 "Title"="标题";
+
+//AllTest11ViewController
+"Identity"="正常";
+"Translation" = "平移";
+"Scale" = "缩放";
+"Horz Reflection" = "水平翻转";
+"Vert Reflection" = "垂直翻转";
+"Reverse" = "对角翻转";
+
+
+

@@ -12,7 +12,7 @@
 
 @implementation MyPathSpace
 
--(id)initWithType:(MyPathSpaceType)type value:(CGFloat)value
+-(MyPathSpace *)initWithSpaceType:(MyPathSpaceType)type value:(CGFloat)value
 {
     self = [super init];
     if (self != nil)
@@ -25,21 +25,21 @@
 }
 
 //浮动距离，根据布局视图的尺寸和子视图的数量动态决定
-+(id)flexed
++(MyPathSpace *)flexed
 {
-    return [[self alloc] initWithType:MyPathSpace_Flexed value:0];
+    return [[self alloc] initWithSpaceType:MyPathSpace_Flexed value:0];
 }
 
 //固定距离，len为长度，每个子视图之间的距离都是len
-+(id)fixed:(CGFloat)len
++(MyPathSpace *)fixed:(CGFloat)len
 {
-    return [[self alloc] initWithType:MyPathSpace_Fixed value:len];
+    return [[self alloc] initWithSpaceType:MyPathSpace_Fixed value:len];
 }
 
 //数量距离，根据布局视图的尺寸和指定的数量动态决定。
-+(id)count:(NSInteger)count
++(MyPathSpace *)count:(NSInteger)count
 {
-    return [[self alloc] initWithType:MyPathSpace_Count value:count];
+    return [[self alloc] initWithSpaceType:MyPathSpace_Count value:count];
 }
 
 
@@ -52,7 +52,7 @@
     __weak MyPathLayout *_pathLayout;
 }
 
--(id)initWithPathLayout:(MyPathLayout*)pathLayout
+-(MyCoordinateSetting *)initWithPathLayout:(MyPathLayout*)pathLayout
 {
     self = [super init];
     if (self != nil)
@@ -140,10 +140,12 @@
 
 @implementation MyPathLayout
 {
-    MyCoordinateSetting  *_coordinateSetting;
     BOOL _hasOriginView;
+    MyCoordinateSetting  *_coordinateSetting;
     MyPathSpace *_spaceType;
 }
+
+#pragma mark -- Public Methods
 
 /*
 +(Class)layerClass
@@ -346,20 +348,30 @@
     
     //要求外界传递进来的索引要考虑原点视图的索引。
     NSMutableArray *retPoints = [NSMutableArray new];
-    
+    NSInteger start;
+    NSInteger end;
+    NSInteger indexsCount = self.pointIndexs.count;
+
     if (realFromIndex < realToIndex)
     {
-        NSInteger start;
-        NSInteger end;
-        if (self.pointIndexs == nil)
+        if (indexsCount == 0)
         {
             start = realFromIndex;
             end = realToIndex;
         }
         else
         {
-            start = [self.pointIndexs[realFromIndex] integerValue];
-            end = [self.pointIndexs[realToIndex] integerValue];
+            
+            if (realFromIndex >= indexsCount)
+                start = [self.pointIndexs[indexsCount - 1] integerValue];
+            else
+                start = [self.pointIndexs[realFromIndex] integerValue];
+            
+            
+            if (realToIndex >= indexsCount)
+                end = [self.pointIndexs[indexsCount - 1] integerValue];
+            else
+                end = [self.pointIndexs[realToIndex] integerValue];
         }
         
         for (NSInteger i = start; i <= end; i++)
@@ -369,8 +381,24 @@
     }
     else
     {
-        NSInteger end = [self.pointIndexs[realFromIndex] integerValue];
-        NSInteger start = [self.pointIndexs[realToIndex] integerValue];
+        if (indexsCount == 0)
+        {
+            start = realToIndex;
+            end = realFromIndex;
+        }
+        else
+        {
+            if (realFromIndex >= indexsCount)
+                end = [self.pointIndexs[indexsCount - 1] integerValue];
+            else
+                end = [self.pointIndexs[realFromIndex] integerValue];
+            
+            
+            if (realToIndex >= indexsCount)
+                start = [self.pointIndexs[indexsCount - 1] integerValue];
+            else
+                start = [self.pointIndexs[realToIndex] integerValue];
+        }
         
         for (NSInteger i = end; i >= start; i--)
         {
@@ -402,7 +430,7 @@
     
 }
 
-#pragma mark -- Override Method
+#pragma mark -- Override Methods
 
 - (void)insertSubview:(UIView *)view atIndex:(NSInteger)index
 {
@@ -538,7 +566,7 @@
         if (!isEstimate)
         {
             sbvmyFrame.frame = sbv.bounds;
-            [self myCalcSizeOfWrapContentSubview:sbv sbvsc:sbvsc sbvmyFrame:sbvmyFrame selfLayoutSize:selfSize];
+            [self myCalcSizeOfWrapContentSubview:sbv sbvsc:sbvsc sbvmyFrame:sbvmyFrame];
         }
         
         if ([sbv isKindOfClass:[MyBaseLayout class]])
@@ -550,11 +578,10 @@
             
             if (isEstimate && (sbvsc.wrapContentWidth || sbvsc.wrapContentHeight))
             {
-                [(MyBaseLayout*)sbv estimateLayoutRect:sbvmyFrame.frame.size inSizeClass:sizeClass];
+                [(MyBaseLayout*)sbv sizeThatFits:sbvmyFrame.frame.size inSizeClass:sizeClass];
                 if (sbvmyFrame.multiple)
                 {
-                    sbvmyFrame.sizeClass = [sbv myBestSizeClass:sizeClass]; //因为estimateLayoutRect执行后会还原，所以这里要重新设置
-                    sbvsc = sbvmyFrame.sizeClass;
+                    sbvmyFrame.sizeClass = [sbv myBestSizeClass:sizeClass]; //因为sizeThatFits执行后会还原，所以这里要重新设置
                 }
             }
         }
@@ -609,7 +636,7 @@
         {
             if (sbvsc.widthSizeInner.dimeRelaVal == lsc.widthSizeInner)
             {
-                rect.size.width = [sbvsc.widthSizeInner measureWith:(selfSize.width - lsc.leftPadding - lsc.rightPadding) ];
+                rect.size.width = [sbvsc.widthSizeInner measureWith:(selfSize.width - lsc.myLayoutLeftPadding - lsc.myLayoutRightPadding) ];
             }
             else
             {
@@ -627,7 +654,7 @@
         {
             if (sbvsc.heightSizeInner.dimeRelaVal == lsc.heightSizeInner)
             {
-                rect.size.height = [sbvsc.heightSizeInner measureWith:(selfSize.height - lsc.topPadding - lsc.bottomPadding) ];
+                rect.size.height = [sbvsc.heightSizeInner measureWith:(selfSize.height - lsc.myLayoutTopPadding - lsc.myLayoutBottomPadding) ];
             }
             else
             {
@@ -688,7 +715,7 @@
         {
             if (sbvsc.widthSizeInner.dimeRelaVal == lsc.widthSizeInner)
             {
-                rect.size.width =  [sbvsc.widthSizeInner measureWith:(selfSize.width - lsc.leftPadding - lsc.rightPadding)];
+                rect.size.width =  [sbvsc.widthSizeInner measureWith:(selfSize.width - lsc.myLayoutLeftPadding - lsc.myLayoutRightPadding)];
             }
             else
             {
@@ -706,7 +733,7 @@
         {
             if (sbvsc.heightSizeInner.dimeRelaVal == lsc.heightSizeInner)
             {
-                rect.size.height =  [sbvsc.heightSizeInner measureWith:selfSize.height - lsc.topPadding - lsc.bottomPadding];
+                rect.size.height =  [sbvsc.heightSizeInner measureWith:selfSize.height - lsc.myLayoutTopPadding - lsc.myLayoutBottomPadding];
             }
             else if (sbvsc.heightSizeInner.dimeRelaVal == sbvsc.widthSizeInner)
             {
@@ -732,8 +759,8 @@
         }
         
         //位置在原点位置。。
-        rect.origin.x = (selfSize.width - lsc.leftPadding - lsc.rightPadding)*self.coordinateSetting.origin.x  - rect.size.width *sbv.layer.anchorPoint.x + sbvsc.leftPosInner.absVal + lsc.leftPadding - sbvsc.rightPosInner.absVal;
-        rect.origin.y = (selfSize.height - lsc.topPadding - lsc.bottomPadding)*self.coordinateSetting.origin.y - rect.size.height * sbv.layer.anchorPoint.y + sbvsc.topPosInner.absVal + lsc.topPadding - sbvsc.bottomPosInner.absVal;
+        rect.origin.x = (selfSize.width - lsc.myLayoutLeftPadding - lsc.myLayoutRightPadding)*self.coordinateSetting.origin.x  - rect.size.width *sbv.layer.anchorPoint.x + sbvsc.leftPosInner.absVal + lsc.myLayoutLeftPadding - sbvsc.rightPosInner.absVal;
+        rect.origin.y = (selfSize.height - lsc.myLayoutTopPadding - lsc.myLayoutBottomPadding)*self.coordinateSetting.origin.y - rect.size.height * sbv.layer.anchorPoint.y + sbvsc.topPosInner.absVal + lsc.myLayoutTopPadding - sbvsc.bottomPosInner.absVal;
         
         if (_myCGFloatLess(CGRectGetMinY(rect), minYPos))
         {
@@ -766,7 +793,7 @@
     
     if (maxYPos == -CGFLOAT_MAX)
     {
-        maxYPos = lsc.topPadding + lsc.bottomPadding;
+        maxYPos = lsc.myLayoutTopPadding + lsc.myLayoutBottomPadding;
     }
     
     if (minXPos == CGFLOAT_MAX)
@@ -776,7 +803,7 @@
     
     if (maxXPos == -CGFLOAT_MAX)
     {
-        maxXPos = lsc.leftPadding + lsc.rightPadding;
+        maxXPos = lsc.myLayoutLeftPadding + lsc.myLayoutRightPadding;
     }
 
     
@@ -794,8 +821,11 @@
     [self myAdjustLayoutSelfSize:&selfSize lsc:lsc];
     
     
+    //对所有子视图进行布局变换
+    [self myAdjustSubviewsLayoutTransform:sbs lsc:lsc selfWidth:selfSize.width selfHeight:selfSize.height];
+    
     //路径布局不支持RTL。
-   // [self myAdjustSubviewsRTLPos:sbs2 selfWidth:selfSize.width];
+    
     
     return [self myAdjustSizeWhenNoSubviews:selfSize sbs:sbs2 lsc:lsc];
 }
@@ -807,7 +837,7 @@
 
 
 
-#pragma mark -- Private Method
+#pragma mark -- Private Methods
 
 
 -(CGFloat)myCalcDistance:(CGPoint)pt1 with:(CGPoint)pt2
@@ -1068,8 +1098,8 @@
 {
     NSMutableArray *pathPointArray = [NSMutableArray new];
     
-    CGFloat selfWidth = CGRectGetWidth(self.bounds) - lsc.leftPadding - lsc.rightPadding;
-    CGFloat selfHeight = CGRectGetHeight(self.bounds) - lsc.topPadding - lsc.bottomPadding;
+    CGFloat selfWidth = CGRectGetWidth(self.bounds) - lsc.myLayoutLeftPadding - lsc.myLayoutRightPadding;
+    CGFloat selfHeight = CGRectGetHeight(self.bounds) - lsc.myLayoutTopPadding - lsc.myLayoutBottomPadding;
     
     CGFloat startArg;
     CGFloat endArg;
@@ -1106,14 +1136,14 @@
             {
                 if (self.coordinateSetting.isReverse)
                 {
-                    return CGPointMake(val + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -arg : arg) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(val + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -arg : arg) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                     
                 }
                 else
                 {
-                    return CGPointMake(arg + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -val : val) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(arg + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -val : val) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                     
                 }
             }
@@ -1153,14 +1183,14 @@
             {
                 if (self.coordinateSetting.isReverse)
                 {
-                    return CGPointMake(val.y + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -val.x : val.x) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(val.y + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -val.x : val.x) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                     
                 }
                 else
                 {
-                    return CGPointMake(val.x + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -val.y : val.y) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(val.x + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -val.y : val.y) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                 }
             }
             else
@@ -1191,8 +1221,8 @@
                 {
                     CGFloat y = r * cos(arg / 180.0 * M_PI);
                     
-                    return CGPointMake(r * sin(arg / 180.0 * M_PI) + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -y : y) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(r * sin(arg / 180.0 * M_PI) + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -y : y) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                     
                 }
                 else
@@ -1200,8 +1230,8 @@
                     
                     CGFloat y = r * sin(arg / 180 * M_PI);
                     
-                    return CGPointMake(r * cos(arg / 180 * M_PI) + selfWidth * self.coordinateSetting.origin.x + lsc.leftPadding,
-                                       (self.coordinateSetting.isMath ? -y : y) + selfHeight * self.coordinateSetting.origin.y + lsc.topPadding);
+                    return CGPointMake(r * cos(arg / 180 * M_PI) + selfWidth * self.coordinateSetting.origin.x + lsc.myLayoutLeftPadding,
+                                       (self.coordinateSetting.isMath ? -y : y) + selfHeight * self.coordinateSetting.origin.y + lsc.myLayoutTopPadding);
                 }
             }
             else

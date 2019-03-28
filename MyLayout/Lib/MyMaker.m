@@ -229,6 +229,11 @@
     [self addMethod:@"centerXPos"];
     return [self addMethod:@"centerYPos"];
 }
+-(MyMaker*)baseline
+{
+    return [self addMethod:@"baselinePos"];
+}
+
 
 -(MyMaker*)visibility
 {
@@ -309,10 +314,10 @@
     _clear = YES;
     return ^id(id val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
             
-            for (UIView * myView in _myViews)
+            for (UIView * myView in self->_myViews)
             {
                 if ([val isKindOfClass:[NSNumber class]])
                 {
@@ -371,9 +376,9 @@
     
     return ^id(CGFloat val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
-            for (UIView *myView in _myViews)
+            for (UIView *myView in self->_myViews)
             {
                 
                 [((MyLayoutPos*)[myView valueForKey:key]) __offset:val];
@@ -389,9 +394,9 @@
     _clear = YES;
     return ^id(CGFloat val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
-            for (UIView *myView in _myViews)
+            for (UIView *myView in self->_myViews)
             {
                 
                 [((MyLayoutSize*)[myView valueForKey:key]) __multiply:val];
@@ -407,10 +412,10 @@
     _clear = YES;
     return ^id(CGFloat val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
             
-            for (UIView *myView in _myViews)
+            for (UIView *myView in self->_myViews)
             {
                 
                 [((MyLayoutSize*)[myView valueForKey:key]) __add:val];
@@ -426,10 +431,10 @@
     _clear = YES;
     return ^id(id val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
             
-            for (UIView *myView in _myViews)
+            for (UIView *myView in self->_myViews)
             {
                 
                 
@@ -460,9 +465,9 @@
     _clear = YES;
     return ^id(id val) {
         
-        for (NSString *key in _keys)
+        for (NSString *key in self->_keys)
         {
-            for (UIView *myView in _myViews)
+            for (UIView *myView in self->_myViews)
             {
                 id val2 = val;
                 if ([val isKindOfClass:[UIView class]])

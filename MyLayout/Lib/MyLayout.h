@@ -37,7 +37,7 @@
  */
 
 
-//Current version is 1.4.2, please open: https://github.com/youngsoft/MyLinearLayout/blob/master/CHANGELOG.md to show the changes.
+//Current version is 1.6.1, please open: https://github.com/youngsoft/MyLinearLayout/blob/master/CHANGELOG.md to show the changes.
 
 
 #ifndef MyLayout_MyLayout_h
@@ -55,6 +55,7 @@
 #import "MyFlowLayout.h"
 #import "MyFloatLayout.h"
 #import "MyPathLayout.h"
+#import "MyGridLayout.h"
 #import "MyMaker.h"
 
 #endif

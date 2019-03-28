@@ -28,10 +28,6 @@
 
 @end
 
-//定义特殊的表格行列尺寸,参考下面addRow方法中的描述。
-#define MTLSIZE_AVERAGE 0
-#define MTLSIZE_WRAPCONTENT -1
-#define MTLSIZE_MATCHPARENT -2
 
 
 /**
@@ -60,25 +56,21 @@
  
  @note 行能设置的值：
  
- 1. MTLSIZE_WRAPCONTENT表示由列子视图决定本行尺寸(垂直表格为行高，水平表格为行宽)，每个列子视图都需要自己设置尺寸(垂直表格为高度，水平表格为宽度)
- 
- 2. MTLSIZE_AVERAGE表示均分尺寸(垂直表格为行高 = 总行高/行数，水平表格为行宽 = 总行宽/行数)，列子视图不需要设置尺寸(垂直表格为高度，水平表格为宽度)
- 
- 3. 大于0表示固定尺寸，表示这行的尺寸为这个固定的数值(垂直表格为行高，水平表格为行宽)，列子视图不需要设置尺寸(垂直表格为高度，水平表格为宽度)。
- 
- 4. 不能设置为MTLSIZE_MATCHPARENT。
+ 1. 一般常数尺寸: 表示这行的尺寸为这个固定的数值(垂直表格为行高，水平表格为行宽)，列子视图不需要设置尺寸(垂直表格为高度，水平表格为宽度)。
+ 2. 特殊尺寸MyLayoutSize.wrap: 表示由列子视图决定本行尺寸(垂直表格为行高，水平表格为行宽)，每个列子视图都需要自己设置尺寸(垂直表格为高度，水平表格为宽度)
+ 3. 特殊尺寸MyLayoutSize.average 表示均分尺寸(垂直表格为行高 = 总行高/行数，水平表格为行宽 = 总行宽/行数)，列子视图不需要设置尺寸(垂直表格为高度，水平表格为宽度)
+ 4. 不能设置为MyLayoutSize.fill。
 
  @note 列能设置的值：
  
- 1. MTLSIZE_MATCHPARENT表示整列尺寸和父视图一样的尺寸(垂直表格为列宽，水平表格为列高)，每个子视图需要设置自己的尺寸(垂直表格为宽度，水平表格为高度)
+ 1. 一般常数尺寸 表示列内每个子视图都具有固定尺寸(垂直表格为宽度，水平表格为高度)，这时候子视图可以不必设置尺寸。
+ 2. 特殊尺寸MyLayoutSize.fill 表示整列尺寸和父视图一样的尺寸(垂直表格为列宽，水平表格为列高)，每个子视图需要设置自己的尺寸(垂直表格为宽度，水平表格为高度)
  
- 2. MTLSIZE_WRAPCONTENT表示整列的尺寸由列内所有子视图包裹(垂直表格为列宽，水平表格为列高).每个子视图需要设置自己的尺寸(垂直表格为宽度，水平表格为高度)
+ 3. 特殊尺寸MyLayoutSize.wrap 表示整列的尺寸由列内所有子视图包裹(垂直表格为列宽，水平表格为列高).每个子视图需要设置自己的尺寸(垂直表格为宽度，水平表格为高度)
  
- 3. MTLSIZE_AVERAGE表示整列的尺寸和父视图一样的尺寸(垂直表格为列宽，水平表格为列高)，每列内子视图的尺寸均分(垂直表格 = 列宽/行内子视图数，水平表格 = 行高/列内子视图数)
+ 4. 特殊尺寸MyLayoutSize.average 表示整列的尺寸和父视图一样的尺寸(垂直表格为列宽，水平表格为列高)，每列内子视图的尺寸均分(垂直表格 = 列宽/行内子视图数，水平表格 = 行高/列内子视图数)
  
- 4. 大于0表示列内每个子视图都具有固定尺寸(垂直表格为宽度，水平表格为高度)，这时候子视图可以不必设置尺寸。
 
- 
  @param rowSize 行的尺寸值，请参考上面的行能设置的值。
  @param colSize 列的尺寸值，请参考上面的列能设置的值。
  @return 返回行布局视图对象
@@ -104,7 +96,7 @@
 
 
 /**
- * 删除一行
+ *删除一行
  */
 -(void)removeRowAt:(NSInteger)rowIndex;
 
@@ -172,15 +164,4 @@
 @end
 
 
-@interface MyTableLayout(MyTableDeprecated)
-
-
-/**
- *  不再单独设置表格的行间距和列间距了，而是复用视图的水平间距和垂直间距。原来表格的行间距和列间距会根据不同的表格方向定义不同而不同，现在统一为水平和垂直间距，不管表格的方向如何，水平间距都是定义左右的间距，垂直间距都是定义上下的间距。
- */
-@property(nonatomic ,assign, getter=subviewVSpace, setter=setSubviewVSpace:)  CGFloat rowSpacing MYMETHODDEPRECATED("use subviewVSpace to instead");
-@property(nonatomic, assign, getter=subviewHSpace, setter=setSubviewHSpace:)  CGFloat colSpacing MYMETHODDEPRECATED("use subviewHSpace to instead");
-
-
-@end
 

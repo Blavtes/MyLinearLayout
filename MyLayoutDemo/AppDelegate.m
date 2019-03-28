@@ -22,6 +22,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //默认的布局视图的padding是会叠加安全区的值的，因此你可以在这里设置为UIRectEdgeNone，让所有布局视图的padding不叠加安全区。
+   //MyBaseLayout.appearance.insetsPaddingFromSafeArea = UIRectEdgeNone;
         
     //this place add the ui template size dime
     [MyDimeScale setUITemplateSize:CGSizeMake(375, 667)];
@@ -31,7 +33,7 @@
         
     ViewController *vc = [[ViewController alloc] init];
    
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
     self.window.rootViewController = nav;
         
     [self.window makeKeyAndVisible];
@@ -59,6 +61,21 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+-(void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    
+    [super touchesEnded:touches withEvent:event];
+    
+    //为了测试使用。主要用于方便通过present出来的VC返回用。
+    CGPoint pt =  [touches.anyObject locationInView:self.window];
+    
+    if (pt.y < 20 && pt.x > 0 && pt.x < 100)
+    {
+        [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+    
 }
 
 @end

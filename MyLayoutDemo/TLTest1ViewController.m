@@ -42,7 +42,7 @@
     tableLayout.backgroundColor = [CFTool color:0];
     tableLayout.subviewHSpace = 2;  //表格的列间距
     tableLayout.subviewVSpace = 2;  //表格的行间距
-    tableLayout.myMargin = 0;   //和父视图保持一致的尺寸，因为这里和父视图四周的边距都是0
+    tableLayout.myMargin = MyLayoutPos.safeAreaMargin;   //和父视图的安全区域保持一致的尺寸，因为这里和父视图四周的边距都是安全区边距。你可以设置为0看看效果。
     [self.view addSubview:tableLayout];
 
     
@@ -65,7 +65,7 @@
     
     
     //第二行固定高度，均分宽度
-    [tableLayout addRow:40 colSize:MTLSIZE_AVERAGE];
+    [tableLayout addRow:40 colSize:MyLayoutSize.average];
 
     colView = [self createLabel:@"Cell10" backgroundColor:[CFTool color:1]];
     [tableLayout addCol:colView atRow:1];
@@ -81,7 +81,7 @@
     
     
     //第三行固定高度，子视图自己决定宽度。
-    [tableLayout addRow:30 colSize:MTLSIZE_WRAPCONTENT];
+    [tableLayout addRow:30 colSize:MyLayoutSize.wrap];
     colView = [self createLabel:@"Cell20" backgroundColor:[CFTool color:1]];
     colView.myWidth = 100;
     [tableLayout addCol:colView atRow:2];
@@ -91,7 +91,7 @@
     [tableLayout addCol:colView atRow:2];
     
     //第四行固定高度，子视图自己决定宽度。
-    [tableLayout addRow:30 colSize:MTLSIZE_MATCHPARENT];
+    [tableLayout addRow:30 colSize:MyLayoutSize.fill];
     colView = [self createLabel:@"Cell30" backgroundColor:[CFTool color:1]];
     colView.myWidth = 80;
     [tableLayout addCol:colView atRow:3];
@@ -102,7 +102,7 @@
     
     
     //第五行高度均分.这里设置为0表示剩余高度再均分。宽度均分,
-    [tableLayout addRow:MTLSIZE_AVERAGE colSize:MTLSIZE_AVERAGE];
+    [tableLayout addRow:MyLayoutSize.average colSize:MyLayoutSize.average];
     MyLinearLayout *row4 = [tableLayout viewAtRowIndex:4];
     //可以设置行的属性.比如padding, 线条颜色，
     row4.padding = UIEdgeInsetsMake(3, 3, 3, 3);
@@ -118,6 +118,9 @@
     //第六行高度固定为0, 列数固定为4。这里只添加了3列，可见列宽是固定的。
     [tableLayout addRow:30 colCount:4];
     
+    //第六行高度由子视图决定，均分宽度
+    [tableLayout addRow:MyLayoutSize.wrap colSize:MyLayoutSize.average];
+    
     colView = [self createLabel:@"Cell50" backgroundColor:[CFTool color:1]];
     [tableLayout addCol:colView atRow:5];
     
@@ -128,7 +131,7 @@
     [tableLayout addCol:colView atRow:5];
     
     //第七行高度由子视图决定，均分宽度
-    [tableLayout addRow:MTLSIZE_WRAPCONTENT colSize:MTLSIZE_AVERAGE];
+    [tableLayout addRow:MyLayoutSize.wrap colSize:MyLayoutSize.average];
     
     colView = [self createLabel:@"Cell60" backgroundColor:[CFTool color:1]];
     colView.myHeight = 80;
