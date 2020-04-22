@@ -101,7 +101,7 @@
     
     
      
-    MyLinearLayout *vertLayout = [self createVertSubviewLayout];//垂直线性布局的高度默认是由子视图的高度决定的，也就是wrapContentHeight默认设置为YES
+    MyLinearLayout *vertLayout = [self createVertSubviewLayout];//垂直线性布局的高度默认是由子视图的高度决定的，也就是高度自适应
     vertLayout.myHorzMargin = 0;  //对于垂直线性布局rootLayout的子视图vertLayout来说，如果同时设置了左右边距为0则表示子视图的宽度和父视图宽度相等。
     [rootLayout addSubview:vertLayout];
     
@@ -122,7 +122,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    UIBarButtonItem *RTLBar = [[UIBarButtonItem alloc]initWithTitle:@"RTL" style:UIBarButtonItemStylePlain target:self action:@selector(RTLAction)];
+    UIBarButtonItem *LTRBar = [[UIBarButtonItem alloc]initWithTitle:@"LTR" style:UIBarButtonItemStylePlain target:self action:@selector(LTRAction)];
+    self.navigationItem.rightBarButtonItems = @[RTLBar,LTRBar];
     // Do any additional setup after loading the view.
+}
+
+// RTL- UI - 更新
+- (void)RTLAction
+{
+    // 当前view的window
+    [MyBaseLayout updateRTL:YES inWindow:self.view.window];
+}
+- (void)LTRAction
+{
+    // 这个适合APP 使用appdelegate 中的window
+    [MyBaseLayout updateRTL:NO inWindow:[UIApplication sharedApplication].delegate.window];
 }
 
 - (void)didReceiveMemoryWarning {

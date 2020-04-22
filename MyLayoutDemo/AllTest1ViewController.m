@@ -9,6 +9,7 @@
 #import "AllTest1ViewController.h"
 #import "AllTestDataModel.h"
 #import "AllTest1TableViewCell.h"
+#import "AllTest1TableViewCellForAutoLayout.h"
 #import "AllTest1TableViewHeaderFooterView.h"
 
 #import "MyLayout.h"
@@ -98,10 +99,11 @@
     //设置所有cell的高度为高度自适应，如果cell高度是动态的请这么设置。 如果不同的cell有差异那么可以通过实现协议方法-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
     //如果您最低要支持到iOS7那么请您实现-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath方法来代替这个属性的设置。
     self.tableView.rowHeight = UITableViewAutomaticDimension;
-    
-    
+
+    //MyLayout中的布局视图可以支持UITableViewCell的高度自适应的能力。这里注册两个cell，一个是不和AutoLayout结合的实现，一个是和AutoLayout结合的实现。至于使用哪种方式您可以二选一。
     [self.tableView registerClass:[AllTest1TableViewCell class] forCellReuseIdentifier:@"alltest1_cell"];
-    
+    [self.tableView registerClass:[AllTest1TableViewCellForAutoLayout class] forCellReuseIdentifier:@"alltest1_cell_forautolayout"];
+
     
     
     /**
@@ -114,7 +116,7 @@
      
      tableHeaderViewLayout.frame = CGRectMake(0, 0, self.tableView.frame.size.width, 100);
      
-      而如果某个布局视图的高度有可能是动态的高度，也就是用了wrapContentHeight为YES时，可以不用指定明确的指定高度，但要指定宽度。而且在布局视图添加到self.tableView.tableHeaderView 之前一定要记得调用：
+      而如果某个布局视图的高度有可能是动态的高度，也就是高度自适应，可以不用指定明确的指定高度，但要指定宽度。而且在布局视图添加到self.tableView.tableHeaderView 之前一定要记得调用：
             [tableHeaderViewLayout layoutIfNeeded]
      
      */
@@ -158,11 +160,11 @@
     
     
     UILabel *label2 = [UILabel new];
-    label2.text = NSLocalizedString(@" if you use layout view to realize the dynamic height tableHeaderView, please use frame to set view's width and use wrapContentHeight to set view's height. the layoutIfNeeded method is needed to call before the layout view assignment to the UITableview's tableHeaderView.", @"");
+    label2.text = NSLocalizedString(@" if you use layout view to realize the dynamic height tableHeaderView, please use frame to set view's width and set view's heightSize to MyLayoutSize.wrap. the layoutIfNeeded method is needed to call before the layout view assignment to the UITableview's tableHeaderView.", @"");
     label2.textColor = [CFTool color:4];
     label2.font = [CFTool font:15];
     label2.myHorzMargin = 5;
-    label2.wrapContentHeight = YES;
+    label2.myHeight = MyLayoutSize.wrap;
     label2.myTop = 10;
     [label2 sizeToFit];
     [tableHeaderViewLayout addSubview:label2];
@@ -233,15 +235,20 @@
 
     AllTest1TableViewCell *cell;
     
+    //MyLayout中的布局视图可以支持UITableViewCell的高度自适应的能力。这里注册两个cell，一个是不和AutoLayout结合的实现，一个是和AutoLayout结合的实现。至于使用哪种方式您可以二选一。
+    NSString *identifiers[2] = {@"alltest1_cell", @"alltest1_cell_forautolayout"};
+    
+    //这里因为AllTest1TableViewCell和AllTest1TableViewCellForAutoLayout的方法名相同，所以这里虽然是两个不同的类，但是我们还是可以使用
+    //AllTest1TableViewCell 这种类型来操作这些方法。
     if ([UIDevice currentDevice].systemVersion.floatValue < 8)
     {
      //如果您的系统要求最低支持到iOS7那么需要通过-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath 来评估高度，因此请不要使用- (__kindof UITableViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier forIndexPath:(NSIndexPath *)indexPath 这个方法来初始化UITableviewCell，否则可能造成系统崩溃！！！
-        cell = (AllTest1TableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"alltest1_cell"];
+        cell = (AllTest1TableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifiers[0]];
     }
     else
     {
         //如果你最低支持到iOS8那么请用这个方法来初始化一个UITableviewCell,用这个方法要记得调用registerClass来注册UITableviewCell，否则可能会返回nil
-        cell = (AllTest1TableViewCell*)[tableView dequeueReusableCellWithIdentifier:@"alltest1_cell" forIndexPath:indexPath];
+        cell = (AllTest1TableViewCell*)[tableView dequeueReusableCellWithIdentifier:identifiers[0] forIndexPath:indexPath];
     }
     
         
@@ -332,10 +339,10 @@
 -(void)handleTableHeaderViewLayoutClick:(MyBaseLayout*)sender
 {
     UILabel *label1 = [sender viewWithTag:1000];
-    if (label1.myVisibility == MyVisibility_Visible)
-        label1.myVisibility = MyVisibility_Gone;
+    if (label1.visibility == MyVisibility_Visible)
+        label1.visibility = MyVisibility_Gone;
     else
-        label1.myVisibility = MyVisibility_Visible;
+        label1.visibility = MyVisibility_Visible;
     
     
     [UIView animateWithDuration:0.3 animations:^{

@@ -12,6 +12,7 @@
 
 /**
  * 动态高度UITableViewCell
+ * 本例子是将布局视图的高度自适应能力和在不使用AutoLayout的情况下实现UITableViewCell高度自适应的能力
  */
 @interface AllTest1TableViewCell : UITableViewCell
 

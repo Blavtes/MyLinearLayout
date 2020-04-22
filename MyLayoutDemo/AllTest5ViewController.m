@@ -28,7 +28,6 @@
     //默认设置为垂直布局
     MyLinearLayout *rootLayout = [MyLinearLayout linearLayoutWithOrientation:MyOrientation_Vert];
     rootLayout.padding = UIEdgeInsetsMake(10, 10, 10, 10);
-    rootLayout.wrapContentHeight = NO;
     rootLayout.gravity = MyGravity_Horz_Fill;
     rootLayout.subviewSpace = 10;
     rootLayout.backgroundColor = [UIColor whiteColor];
@@ -57,16 +56,16 @@
     [rootLayout addSubview:v3];
         
     //v3视图在其他任何iPhone设备横屏都不参与布局
-    [v3 fetchLayoutSizeClass:MySizeClass_wAny | MySizeClass_hCompact].myVisibility = MyVisibility_Gone;
+    [v3 fetchLayoutSizeClass:MySizeClass_wAny | MySizeClass_hCompact].visibility = MyVisibility_Gone;
     //只有iphone6Plus的横屏才参与布局
-    [v3 fetchLayoutSizeClass:MySizeClass_wRegular | MySizeClass_hCompact copyFrom:MySizeClass_wAny | MySizeClass_hAny].myVisibility = MyVisibility_Visible;
+    [v3 fetchLayoutSizeClass:MySizeClass_wRegular | MySizeClass_hCompact copyFrom:MySizeClass_wAny | MySizeClass_hAny].visibility = MyVisibility_Visible;
     
     //针对iPhone设备的所有横屏的高度都是Compact的，而宽度则是任意，因此下面的设置横屏情况下布局变为水平布局。
     //虽然fetchLayoutSizeClass方法真实返回的是MyLayoutSize或者其派生类，但是仍然可以用视图以及布局来设置其中的属性
     //但是调用lsc.backgroundColor = xx 则会崩溃，因为fetchLayoutSizeClass返回的并不是真的视图对象。
     MyLinearLayout *lsc = [rootLayout fetchLayoutSizeClass:MySizeClass_wAny | MySizeClass_hCompact copyFrom:MySizeClass_wAny | MySizeClass_hAny];
     lsc.orientation = MyOrientation_Horz;
-    lsc.wrapContentWidth = NO;
+    lsc.widthSize.equalTo(nil);
     lsc.gravity = MyGravity_Vert_Fill;
     
     

@@ -27,7 +27,7 @@
 #import "RLTest3ViewController.h"
 #import "RLTest4ViewController.h"
 #import "RLTest5ViewController.h"
-
+#import "RLTest6ViewController.h"
 
 #import "TLTest1ViewController.h"
 #import "TLTest2ViewController.h"
@@ -43,6 +43,9 @@
 #import "FLLTest6ViewController.h"
 #import "FLLTest7ViewController.h"
 #import "FLLTest8ViewController.h"
+#import "FLLTest9ViewController.h"
+
+#import "FLXTest1ViewController.h"
 
 
 #import "AllTest1ViewController.h"
@@ -56,6 +59,8 @@
 #import "AllTest9ViewController.h"
 #import "AllTest10ViewController.h"
 #import "AllTest11ViewController.h"
+#import "AllTest12ViewController.h"
+#import "AllTestExampleViewController.h"
 
 
 #import "FOLTest1ViewController.h"
@@ -146,6 +151,9 @@
                                                },
                                              @{@"title":NSLocalizedString(@"5.RelativeLayout - Boundary limit", @""),
                                                @"class":[RLTest5ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"6.RelativeLayout - MostSize&MostPos", @""),
+                                               @"class":[RLTest6ViewController class]
                                                }
                                              ]
                             },
@@ -192,10 +200,19 @@
                                                },
                                              @{@"title":NSLocalizedString(@"8.FlowLayout - Flex space", @""),
                                                @"class":[FLLTest8ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"9.FlowLayout - Line gravity", @""),
+                                               @"class":[FLLTest9ViewController class]
                                                }
                                              ]
                             },
-                          
+                          @{@"type_title":@"Flex布局(FlexLayout)",
+                            @"type_desc":@"fll.png",
+                            @"type_vclist":@[@{@"title":NSLocalizedString(@"1.FlexLayout - Flexlayout", @""),
+                                               @"class":[FLXTest1ViewController class]
+                                               }
+                                             ]
+                            },
                           @{@"type_title":@"浮动布局(FloatLayout)",
                             @"type_desc":@"flo.png",
                             @"type_vclist":@[@{@"title":NSLocalizedString(@"1.FloatLayout - Float", @""),
@@ -296,6 +313,12 @@
                                                },
                                              @{@"title":NSLocalizedString(@"❁5.Subviews layout transform", @""),
                                                @"class":[AllTest11ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁6.MyLayout & AutoLayout", @""),
+                                               @"class":[AllTest12ViewController class]
+                                               },
+                                             @{@"title":NSLocalizedString(@"❁7.example", @""),
+                                               @"class":[AllTestExampleViewController class]
                                                }
                                              ]
                             }
